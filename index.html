@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bedrock — เริ่มเขียน Python จากศูนย์</title>
+
+  <!-- ฟอนต์: หัวเรื่อง IBM Plex Sans Thai, เนื้อความ Sarabun, โค้ด JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Sarabun:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">Bedrock <small>เรียน Python จากศูนย์</small></a>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>เริ่มเขียน Python จากศูนย์</h1>
+      <p class="lede">ไม่ต้องติดตั้งอะไรเลย เริ่มได้ใน 1 คลิก เรียนทีละก้าวเล็ก ๆ ผิดได้ไม่ต้องกลัว แล้วคุณจะแปลกใจว่าตัวเองทำได้</p>
+
+      <div class="cta-row">
+        <button id="start-btn" class="btn btn-primary btn-lg">เริ่มเรียน</button>
+        <button id="continue-btn" class="btn btn-secondary btn-lg" hidden>เรียนต่อจากเดิม</button>
+      </div>
+      <p id="progress-note" class="progress-note"></p>
+    </section>
+
+    <section class="features">
+      <div class="feature card">
+        <h3>สำเร็จตั้งแต่บรรทัดแรก</h3>
+        <p>ออกแบบให้คุณรันโค้ดได้สำเร็จภายใน 2 นาทีแรก เพื่อให้รู้สึกว่า "ฉันทำได้"</p>
+      </div>
+      <div class="feature card">
+        <h3>ผิดพลาดเป็นภาษาไทย</h3>
+        <p>เมื่อโค้ดยังไม่ถูก จะอธิบายเป็นภาษาไทยเข้าใจง่าย โทนเป็นมิตร ชี้ทางต่อให้เสมอ</p>
+      </div>
+      <div class="feature card">
+        <h3>ไปตามจังหวะของคุณ</h3>
+        <p>ไม่มีจับเวลา ไม่มีกระดานแข่งขัน เรียนเมื่อพร้อม ความก้าวหน้าถูกเก็บไว้ให้</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- สคริปต์: config มาก่อนเสมอ แล้วค่อย storage และ app -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
