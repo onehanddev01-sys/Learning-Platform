@@ -6,3 +6,6 @@ desktop.ini
 # โฟลเดอร์/ไฟล์ชั่วคราว
 *.log
 *.tmp
+
+# การตั้งค่าส่วนตัวของ Claude Code (ไม่ต้องขึ้น repo)
+.claude/settings.local.json

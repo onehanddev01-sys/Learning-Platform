@@ -74,14 +74,18 @@ function initHome(){
   const continueBtn = el("continue-btn");
   if(continueBtn){
     if(hasProgress){
+      // มีความก้าวหน้าแล้ว -> โชว์ปุ่ม แล้วพาไปด่านที่เรียนค้างอยู่
       continueBtn.hidden = false;
       continueBtn.addEventListener("click", function(){
-        // ไปด่านปัจจุบันที่ยังเรียนอยู่ (ถ้าเกิน 15 ให้กลับแผนที่)
+        // ไปด่านปัจจุบันที่ยังเรียนอยู่ (ถ้าเกิน 15 ให้หยุดที่ด่านสุดท้าย)
         const id = Math.min(p.currentMission, BEDROCK_CONFIG.curriculum.missionsTotal);
         go("lesson.html?id=" + id);
       });
       const note = el("progress-note");
       if(note) note.textContent = "เรียนไปแล้ว " + p.completedMissions.length + " / " + BEDROCK_CONFIG.curriculum.missionsTotal + " ด่าน";
+    } else {
+      // ยังไม่เริ่มเรียน -> ซ่อนปุ่ม "เรียนต่อจากเดิม" ไปเลย
+      continueBtn.hidden = true;
     }
   }
 }
@@ -102,22 +106,21 @@ function initMap(){
 
   renderStonePath(nodes, wrap);
 
-  // ปุ่มเริ่มใหม่ (ลบความก้าวหน้า)
+  // ปุ่มเริ่มใหม่ (ลบความก้าวหน้า) -> ใช้ modal ยืนยันสไตล์แอป แทน window.confirm
   const resetBtn = el("reset-btn");
   if(resetBtn){
-    resetBtn.addEventListener("click", function(){
-      if(window.confirm("ต้องการเริ่มใหม่ทั้งหมดไหม? ความก้าวหน้าที่ผ่านมาจะถูกลบ")){
-        resetProgress();
-        go("map.html");
-      }
-    });
+    resetBtn.addEventListener("click", openResetConfirm);
+    const confirmYes = el("confirm-reset");
+    const confirmNo  = el("confirm-cancel");
+    if(confirmYes) confirmYes.addEventListener("click", function(){ resetProgress(); go("map.html"); });
+    if(confirmNo)  confirmNo.addEventListener("click", closeResetConfirm);
   }
 
-  // เลื่อนหน้าไปยังด่านปัจจุบันให้อัตโนมัติ
+  // เลื่อนหน้าไปหยุดที่ "ด่านปัจจุบัน" (ด่านที่เล่นได้) อย่างนุ่มนวล
   setTimeout(function(){
-    const cur = wrap.querySelector(".node.unlocked:not(.completed)") || wrap.querySelector(".node.unlocked");
+    const cur = wrap.querySelector(".node.current") || wrap.querySelector(".node.unlocked");
     if(cur) cur.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block:"center" });
-  }, 120);
+  }, 150);
 
   // วาดเส้นทางใหม่เมื่อปรับขนาดจอ (เผื่อ amplitude เปลี่ยน)
   let rz;
@@ -180,6 +183,11 @@ function renderStonePath(nodes, wrap){
     }
   });
 
+  // หา "ด่านปัจจุบัน" = โหนดแรกที่เล่นได้แต่ยังไม่ผ่าน (ใช้ทำให้เด่น + เป็นจุดเลื่อนไปหยุด)
+  let currentIdx = points.findIndex(function(pt){
+    return nodeUnlocked(pt.node) && !nodeCompleted(pt.node);
+  });
+
   // ----- วางหมุด (node) -----
   points.forEach(function(pt){
     const node = pt.node;
@@ -187,6 +195,7 @@ function renderStonePath(nodes, wrap){
     const completed = nodeCompleted(node);
     const isProject = node.kind === "project";
     const isCapstone = isProject && node.ref.capstone;
+    const isCurrent = pt.i === currentIdx;   // ด่านที่ผู้ใช้ควรเริ่มเล่นตอนนี้
 
     const b = document.createElement("button");
     b.type = "button";
@@ -194,7 +203,8 @@ function renderStonePath(nodes, wrap){
       (unlocked ? " unlocked" : " locked") +
       (completed ? " completed" : "") +
       (isProject ? " project" : "") +
-      (isCapstone ? " capstone" : "");
+      (isCapstone ? " capstone" : "") +
+      (isCurrent ? " current" : "");
     b.style.left = pt.x + "%";
     b.style.top = pt.y + "px";
 
@@ -275,6 +285,7 @@ function initLesson(){
   resetHints();
   attempts = 0;
   renderLesson();
+  setupInputModal();   // ผูกปุ่มของกล่องกรอกข้อมูล input()
 }
 
 function showLockedScreen(){
@@ -377,11 +388,12 @@ function handleRun(){
   if(!editor) return;
   const code = editor.getValue();
   runPython(code, function(result){
+    if(result.error === "__CANCEL__") return;   // ผู้ใช้ยกเลิกตอนกรอกข้อมูล -> ไม่นับอะไร
     if(result.success && currentItem.check(result.output, code)){
-      // ผ่าน! บันทึกความก้าวหน้า + ฉลอง
+      // ผ่าน! บันทึกความก้าวหน้า + ฉลอง (ส่ง output ไปโชว์ในกล่องชนะด้วย)
       if(currentKind === "project") markProjectComplete(currentItem.id);
       else markComplete(currentItem.id);
-      showWinModal(currentItem.winMessage);
+      showWinModal(currentItem.winMessage, result.output);
     } else if(!result.success){
       // มี error -> นับ error ซ้ำเพื่อเผยคำใบ้อัตโนมัติ
       attempts++;
@@ -437,24 +449,43 @@ function showExampleAgain(){
 }
 
 /* ---------- โมดอลชนะ + confetti ---------- */
-function showWinModal(message){
+function showWinModal(message, output){
   const modal = el("win-modal");
   if(!modal) return;
-  el("win-message").textContent = message;
 
-  // ปุ่มไปต่อ: ถ้ามีด่านถัดไปที่เป็นด่านปกติ ให้ไปด่านนั้น ไม่งั้นกลับแผนที่
-  const nextBtn = el("win-next");
-  let nextUrl = null;
-  if(currentKind === "mission"){
-    const nextId = currentItem.id + 1;
-    if(MISSIONS.find(m => m.id === nextId)) nextUrl = "lesson.html?id=" + nextId;
+  // แสดงผลลัพธ์ของผู้เรียนในกล่องชนะ เพื่อให้ได้เห็นผลที่โค้ดตัวเองทำก่อนไปต่อ
+  const winOut = el("win-output");
+  const winOutText = el("win-output-text");
+  if(winOut && winOutText){
+    const o = (output || "").replace(/\s+$/,"");
+    if(o.length){ winOutText.textContent = o; winOut.hidden = false; }
+    else { winOut.hidden = true; }
   }
-  if(nextUrl){
+
+  // หาโหนดถัดไปจาก "ลำดับจริงของแผนที่" (mission สลับ project ตาม afterMission)
+  const seq = buildPathNodes();
+  const idx = seq.findIndex(function(nd){ return nd.kind === currentKind && nd.id === currentItem.id; });
+  const next = (idx >= 0 && idx < seq.length - 1) ? seq[idx + 1] : null;
+
+  const heading = el("win-heading");
+  const nextBtn = el("win-next");
+
+  if(next){
+    // ยังมีด่านถัดไป (จะเป็น mission, มินิโปรเจกต์ หรือ Capstone ก็ได้)
+    if(heading) heading.textContent = "ผ่านแล้ว!";
+    el("win-message").textContent = message;
+    const nextUrl = (next.kind === "project")
+      ? ("lesson.html?project=" + next.id)
+      : ("lesson.html?id=" + next.id);
     nextBtn.hidden = false;
     nextBtn.onclick = function(){ go(nextUrl); };
   } else {
+    // โหนดสุดท้าย (Capstone) -> จบหลักสูตร ไม่มีปุ่มไปต่อ
+    if(heading) heading.textContent = "จบหลักสูตรแล้ว";
+    el("win-message").textContent = message;
     nextBtn.hidden = true;
   }
+
   el("win-map").onclick = function(){ go("map.html"); };
 
   modal.classList.add("open");
@@ -508,6 +539,99 @@ function fireConfetti(){
     }
   }
   requestAnimationFrame(frame);
+}
+
+/* ---------- กล่องกรอกข้อมูล input() (modal ในหน้าเว็บ แทน window.prompt) ---------- */
+const BEDROCK_INPUT_CANCEL = "__BEDROCK_INPUT_CANCEL__";
+let inputResolve = null, inputReject = null;
+let inputWaitStart = 0;   // เวลาเริ่มรอผู้ใช้พิมพ์ (ใช้หักเวลาออกจาก execLimit)
+
+// Skulpt เรียกตัวนี้เมื่อโค้ดสั่ง input() -> คืน Promise ที่ resolve เมื่อผู้ใช้กดส่ง
+function askInput(promptText){
+  return new Promise(function(resolve, reject){
+    inputResolve = resolve; inputReject = reject;
+    inputWaitStart = Date.now();
+    const modal = el("input-modal");
+    const q = el("input-question");
+    const field = el("input-field");
+    const warn = el("input-warn");
+    if(q) q.textContent = (promptText && String(promptText).trim()) ? String(promptText) : "พิมพ์คำตอบของคุณ";
+    if(warn) warn.hidden = true;
+    if(field) field.value = "";
+    if(modal){ modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); }
+    if(field) setTimeout(function(){ field.focus(); }, 30);
+  });
+}
+
+// กด "ส่งคำตอบ" -> ถ้าว่างให้เตือนเบา ๆ, ถ้ามีค่าให้ส่งกลับเข้าโปรแกรม
+function submitInput(){
+  const field = el("input-field");
+  const val = field ? field.value : "";
+  if(String(val).trim().length === 0){
+    const warn = el("input-warn");
+    if(warn) warn.hidden = false;     // เตือนให้พิมพ์ก่อน (ยังไม่ปิดกล่อง)
+    if(field) field.focus();
+    return;
+  }
+  // หักเวลาที่นั่งรอผู้ใช้พิมพ์ออกจากตัวจับเวลาของ Skulpt
+  // (ไม่งั้นผู้ที่พิมพ์ช้าจะโดน TimeLimitError ทั้งที่โค้ดไม่ได้วนไม่จบ)
+  if(typeof Sk !== "undefined" && Sk.execStart && inputWaitStart){
+    Sk.execStart = new Date(Sk.execStart.valueOf() + (Date.now() - inputWaitStart));
+  }
+  closeInputModal();
+  if(inputResolve){ const r = inputResolve; inputResolve = inputReject = null; r(val); }
+}
+
+// กด "ยกเลิก" / ปิดกล่อง -> ยกเลิกการรันทั้งหมด (ไม่ถือว่าผ่าน)
+function cancelInput(){
+  closeInputModal();
+  if(inputReject){ const rj = inputReject; inputResolve = inputReject = null; rj(BEDROCK_INPUT_CANCEL); }
+}
+
+function closeInputModal(){
+  const modal = el("input-modal");
+  if(modal){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); }
+}
+
+// ผูกปุ่มของกล่อง input ครั้งเดียวตอนเข้าหน้า lesson
+function setupInputModal(){
+  const submit = el("input-submit");
+  const cancel = el("input-cancel");
+  const field = el("input-field");
+  if(submit) submit.addEventListener("click", submitInput);
+  if(cancel) cancel.addEventListener("click", cancelInput);
+  if(field) field.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ e.preventDefault(); submitInput(); }
+    if(e.key === "Escape"){ cancelInput(); }
+  });
+}
+
+/* ---------- ไฮไลต์บรรทัดที่ผิดใน CodeMirror (เรียกจาก runner.js) ---------- */
+let errorLineMark = null;
+
+function clearErrorLines(){
+  if(editor && errorLineMark !== null){
+    editor.removeLineClass(errorLineMark, "background", "cm-error-line");
+    errorLineMark = null;
+  }
+}
+
+function markErrorLine(lineNo){
+  if(!editor || !lineNo) return;
+  const idx = lineNo - 1;                       // CodeMirror นับบรรทัดจาก 0
+  if(idx < 0 || idx >= editor.lineCount()) return;
+  editor.addLineClass(idx, "background", "cm-error-line");
+  errorLineMark = idx;
+}
+
+/* ---------- กล่องยืนยัน "เริ่มใหม่" (แทน window.confirm) ---------- */
+function openResetConfirm(){
+  const m = el("confirm-modal");
+  if(m){ m.classList.add("open"); m.setAttribute("aria-hidden","false"); }
+}
+function closeResetConfirm(){
+  const m = el("confirm-modal");
+  if(m){ m.classList.remove("open"); m.setAttribute("aria-hidden","true"); }
 }
 
 /* =====================================================================

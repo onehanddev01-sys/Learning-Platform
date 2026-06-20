@@ -4,16 +4,24 @@
    ไม่ใช้ emoji (UI จะใส่ไอคอนเตือนแบบ SVG ให้เอง)
    ไม่บอกคำตอบตรง ๆ แค่สะกิดให้ไปดูจุดที่น่าจะพลาด
    ============================================================= */
-function translateError(raw){
+// codeLine (ถ้าส่งมา) = ข้อความของบรรทัดที่ผิด ใช้ช่วยเดาอาการให้แม่นขึ้น
+function translateError(raw, codeLine){
   const lower = raw.toLowerCase();
   const type  = raw.split(":")[0].trim();
+
+  // อาการยอดฮิตของมือใหม่: ลืมใส่ : ท้ายบล็อก (if/elif/else/for/while/def...)
+  // เช็คจากตัวบรรทัดจริงก่อน จะแม่นกว่าการเดาจากข้อความ error ดิบ
+  if (codeLine && /^\s*(if|elif|else|for|while|def|try|except|finally|with|class)\b/.test(codeLine)
+      && !codeLine.trim().endsWith(":")){
+    return "ลืมใส่ : ท้ายบรรทัดไหม? บรรทัดที่ขึ้นต้นด้วย if / elif / else / for / while / def ต้องจบด้วยเครื่องหมาย :";
+  }
 
   // SyntaxError มีหลายกรณีย่อย แยกข้อความให้ตรงอาการ
   if (type === "SyntaxError"){
     if (lower.includes("eof") || lower.includes("multi-line"))
       return "ดูเหมือนเปิดวงเล็บหรือเครื่องหมายไว้แต่ยังปิดไม่ครบนะ ลองนับ ( ) หรือ \" \" ให้เท่ากัน";
     if (lower.includes("bad token") || lower.includes("bad input"))
-      return "มีบางตัวอักษรที่ Python อ่านไม่ออก ลองดูว่าพิมพ์อะไรเกินมาไหม";
+      return "รูปแบบบรรทัดนี้ยังไม่ถูกหลักภาษา ลองเช็คว่าลืมใส่ : ท้ายบรรทัด (if / for / def) หรือพิมพ์อะไรเกินมาไหม";
     return "รูปแบบบรรทัดนี้ยังไม่ถูกหลักภาษา ลองเทียบกับตัวอย่างด้านบน (ลืม : ท้าย if / for / def ไหม?)";
   }
 

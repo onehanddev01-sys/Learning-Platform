@@ -29,6 +29,18 @@
     <div id="map-path"></div>
   </main>
 
+  <!-- กล่องยืนยันการเริ่มใหม่ (สไตล์เดียวกับแอป ใช้แทน window.confirm) -->
+  <div id="confirm-modal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirm-heading">
+    <div class="win-card">
+      <h2 id="confirm-heading">เริ่มใหม่ทั้งหมด?</h2>
+      <p class="win-msg">ความก้าวหน้าที่ผ่านมาจะถูกลบทั้งหมด แล้วเริ่มจากด่านแรกใหม่</p>
+      <div class="win-actions">
+        <button id="confirm-reset" class="btn btn-primary">เริ่มใหม่</button>
+        <button id="confirm-cancel" class="btn btn-ghost">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/missions.js"></script>

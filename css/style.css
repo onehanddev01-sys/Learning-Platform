@@ -50,6 +50,9 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 
 .wrap{ max-width:980px; margin:0 auto; padding:0 var(--s5); }
 
+/* ให้ attribute hidden ทำงานเสมอ (กัน .btn display:inline-flex มาทับจน hidden ไม่ผล) */
+[hidden]{ display:none !important; }
+
 /* ---------- 3) ปุ่ม ---------- */
 .btn{
   display:inline-flex; align-items:center; gap:var(--s2); justify-content:center;
@@ -124,6 +127,9 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 .node.project{ width:58px; height:58px; border-style:dashed; }
 .node.project.completed{ border-style:solid; }
 .node.capstone{ width:72px; height:72px; }
+/* ด่านปัจจุบัน: วงแหวนเต้นเบา ๆ ให้ผู้ใช้รู้ว่าเริ่มตรงนี้
+   (ใช้ .node.unlocked.current ให้ specificity ชนะกฎ bob ด้านบน) */
+.node.unlocked.current{ animation:bob 2.4s ease-in-out infinite, currentRing 1.8s ease-out infinite; }
 .node:hover:not(.locked){ transform:translate(-50%,-50%) scale(1.08); box-shadow:var(--shadow-lift); }
 .node:focus-visible{ outline:3px solid var(--brand); outline-offset:3px; }
 
@@ -181,6 +187,8 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 .CodeMirror{ height:auto; min-height:200px; font-family:'JetBrains Mono','IBM Plex Mono',monospace;
   font-size:16px; line-height:1.6; }
 .CodeMirror-gutters{ background:#F0F3F5; border-right:1px solid var(--line); }
+/* ไฮไลต์บรรทัดที่ error ชี้ไป (โทนส้มอ่อน เข้ากับธีม error) */
+.CodeMirror .cm-error-line{ background:rgba(230,126,34,.14); }
 
 .action-row{ display:flex; gap:var(--s3); align-items:center; margin-top:var(--s4); flex-wrap:wrap; }
 #run-btn{ flex:0 0 auto; }                /* ปุ่มรัน เด่นสุดในหน้า */
@@ -229,6 +237,23 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 .win-actions{ display:flex; gap:var(--s3); justify-content:center; flex-wrap:wrap; }
 #confetti{ position:fixed; inset:0; z-index:60; pointer-events:none; }
 
+/* ผลลัพธ์ของผู้เรียนในกล่อง "ผ่านแล้ว" (ให้เห็นผลที่โค้ดตัวเองทำก่อนไปต่อ) */
+.win-output{ text-align:left; background:#F0F3F5; border-radius:var(--r-btn);
+  padding:var(--s3) var(--s4); margin:0 0 var(--s4); }
+.win-output-label{ font-family:'IBM Plex Sans Thai',sans-serif; font-weight:600;
+  font-size:13px; color:var(--muted); margin-bottom:var(--s1); }
+#win-output-text{ margin:0; font-family:'JetBrains Mono','IBM Plex Mono',monospace; font-size:15px;
+  color:var(--ink); white-space:pre-wrap; word-break:break-word; max-height:160px; overflow:auto; }
+
+/* กล่องกรอกข้อมูล input() */
+.input-card{ }
+.input-question{ color:var(--ink); margin-bottom:var(--s4); }
+.input-field{ width:100%; font-family:'Sarabun',sans-serif; font-size:18px; color:var(--ink);
+  padding:12px 14px; border:2px solid var(--line); border-radius:var(--r-btn); background:var(--surface);
+  margin-bottom:var(--s3); }
+.input-field:focus{ outline:none; border-color:var(--brand); background:var(--card); }
+.input-warn{ color:var(--caution); font-size:15px; margin:0 0 var(--s3); }
+
 /* ---------- 9) Toast ---------- */
 #toast{
   position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
@@ -243,6 +268,7 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
 @keyframes fadeInUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
 @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(14,124,123,.4);} 50%{ box-shadow:0 0 0 8px rgba(14,124,123,0);} }
+@keyframes currentRing{ 0%{ box-shadow:0 0 0 0 rgba(14,124,123,.45);} 100%{ box-shadow:0 0 0 14px rgba(14,124,123,0);} }
 @keyframes flashBorder{ 0%,100%{ box-shadow:none;} 30%{ box-shadow:0 0 0 3px var(--gold);} }
 
 /* โฟกัสเห็นชัดตอนกด Tab (การเข้าถึง) */

@@ -67,6 +67,10 @@
     <div class="win-card">
       <div id="win-icon" class="win-icon"></div>
       <h2 id="win-heading">ผ่านแล้ว!</h2>
+      <div id="win-output" class="win-output" hidden>
+        <div class="win-output-label">ผลลัพธ์ของคุณ</div>
+        <pre id="win-output-text"></pre>
+      </div>
       <p id="win-message" class="win-msg"></p>
       <div class="win-actions">
         <button id="win-next" class="btn btn-primary">ไปด่านถัดไป</button>
@@ -75,6 +79,19 @@
     </div>
   </div>
   <canvas id="confetti"></canvas>
+
+  <!-- กล่องกรอกข้อมูลสำหรับ input() (สไตล์เดียวกับกล่องผ่านแล้ว ใช้แทน window.prompt) -->
+  <div id="input-modal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="input-question">
+    <div class="win-card input-card">
+      <h2 id="input-question" class="input-question">พิมพ์คำตอบของคุณ</h2>
+      <input id="input-field" class="input-field" type="text" autocomplete="off" aria-label="ช่องพิมพ์คำตอบ">
+      <p id="input-warn" class="input-warn" hidden>ลองพิมพ์คำตอบก่อนนะ แล้วค่อยกดส่ง</p>
+      <div class="win-actions">
+        <button id="input-submit" class="btn btn-primary">ส่งคำตอบ</button>
+        <button id="input-cancel" class="btn btn-ghost">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ไลบรารีภายนอก: CodeMirror + Skulpt -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>

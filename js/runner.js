@@ -30,7 +30,8 @@ function runPython(code, onDone){
 
   // เคลียร์ผลลัพธ์เก่าก่อนรันใหม่ (ตาม config.clearOutputBeforeRun)
   if (BEDROCK_CONFIG.runtime.clearOutputBeforeRun && txt) txt.textContent = "";
-  if (box){ box.classList.remove("error"); box.classList.remove("empty"); }
+  if (box){ box.classList.remove("error"); box.classList.remove("empty"); box.classList.remove("nudge"); }
+  if (typeof clearErrorLines === "function") clearErrorLines(); // ล้างไฮไลต์บรรทัดผิดของรอบก่อน
 
   // จำกัดเวลาทำงาน กันลูป while ที่ไม่มีวันหยุดทำเบราว์เซอร์ค้าง
   Sk.execLimit = BEDROCK_CONFIG.runtime.execLimitMs;
@@ -39,7 +40,9 @@ function runPython(code, onDone){
     output: skOut,
     read: builtinRead,
     __future__: Sk.python3,
-    inputfun: function(p){ return window.prompt(p || ""); }, // input() -> กล่องเด้งให้พิมพ์
+    // input() -> เปิด modal ในหน้าเว็บ (สไตล์ไทย) แทนกล่อง prompt ของเบราว์เซอร์
+    // askInput() คืนค่าเป็น Promise -> Skulpt รอจนผู้ใช้กด "ส่งคำตอบ" ได้
+    inputfun: function(p){ return askInput(p); },
     inputfunTakesPrompt: true
   });
 
@@ -53,9 +56,37 @@ function runPython(code, onDone){
     },
     function(err){
       const raw = err.toString();
-      if (txt) txt.textContent = translateError(raw); // แปลไทยก่อนแสดงเสมอ
+
+      // กรณีผู้ใช้กด "ยกเลิก" ในกล่องกรอกข้อมูล -> ไม่ใช่ error และไม่ใช่ผ่าน
+      if (raw.indexOf("__BEDROCK_INPUT_CANCEL__") !== -1){
+        if (box){ box.classList.remove("error"); box.classList.add("nudge"); }
+        if (txt) txt.textContent = "ยกเลิกการรันแล้ว กดรันใหม่เมื่อพร้อมได้เลย";
+        onDone({ success:false, output:"", error:"__CANCEL__" });
+        return;
+      }
+
+      // หาเลขบรรทัดที่ผิด (จาก traceback ของ Skulpt ก่อน ไม่งั้นแกะจากข้อความ)
+      const lineNo = errorLineNumber(err, raw);
+      // ดึงข้อความของบรรทัดนั้นมาช่วยแปลให้แม่นขึ้น (เช่น ลืม : ท้ายบรรทัด)
+      const codeLine = lineNo ? (code.split("\n")[lineNo - 1] || "") : "";
+
+      let msg = translateError(raw, codeLine);          // แปลไทยก่อนแสดงเสมอ
+      if (lineNo) msg = "ที่บรรทัด " + lineNo + ": " + msg;   // บอกตำแหน่งให้หาง่าย
+      if (txt) txt.textContent = msg;
       if (box) box.classList.add("error");
+      if (lineNo && typeof markErrorLine === "function") markErrorLine(lineNo); // ไฮไลต์ใน CodeMirror
+
       onDone({ success:false, output:(txt ? txt.textContent : ""), error:raw });
     }
   );
+}
+
+// ดึงเลขบรรทัดที่ผิดจาก error ของ Skulpt (traceback ก่อน แล้วค่อยแกะจากข้อความ)
+function errorLineNumber(err, raw){
+  try{
+    if (err && err.traceback && err.traceback.length && err.traceback[0].lineno)
+      return err.traceback[0].lineno;
+  }catch(e){ /* เผื่อ error บางชนิดไม่มี traceback */ }
+  const m = /on line (\d+)/i.exec(raw || "");
+  return m ? parseInt(m[1], 10) : null;
 }
