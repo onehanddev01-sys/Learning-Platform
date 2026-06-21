@@ -14,7 +14,9 @@ const ICON = {
   arrowR:'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   arrowL:'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   bulb:  '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 21h6M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.2 1 2.5h6c0-1.3.3-1.8 1-2.5A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
-  eye:   '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+  eye:   '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  close: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 };
 
 const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -252,6 +254,7 @@ let currentItem = null;   // ด่านหรือโปรเจกต์ป
 let currentKind = "mission";
 let editor = null;
 let attempts = 0;         // จำนวนครั้งที่รันแล้วยังไม่ผ่าน
+let hintsCollapsed = false; // ยุบคำใบ้เป็นแถบพับแล้วหรือยัง (หลังผ่านด่าน)
 
 function getQuery(name){
   const m = new RegExp("[?&]" + name + "=([^&]+)").exec(window.location.search);
@@ -284,8 +287,12 @@ function initLesson(){
 
   resetHints();
   attempts = 0;
+  hintsCollapsed = false;
   renderLesson();
   setupInputModal();   // ผูกปุ่มของกล่องกรอกข้อมูล input()
+  setupWinModal();     // ผูกปุ่ม/คีย์ของกล่องชนะ (อยู่เล่นต่อ / กากบาท / Esc / คลิกพื้นหลัง)
+  // ถ้าเป็นด่านที่เคยผ่านมาแล้ว -> โชว์แถบ "ผ่านแล้ว ไปต่อ" ค้างไว้ตั้งแต่เข้าหน้า
+  if(isItemCompleted()) revealDoneBar();
 }
 
 function showLockedScreen(){
@@ -387,23 +394,39 @@ function escapeHtml(s){
 function handleRun(){
   if(!editor) return;
   const code = editor.getValue();
+  const already = isItemCompleted();   // เคยผ่านด่านนี้มาก่อนหรือยัง (เช็คก่อนรันรอบนี้)
   runPython(code, function(result){
     if(result.error === "__CANCEL__") return;   // ผู้ใช้ยกเลิกตอนกรอกข้อมูล -> ไม่นับอะไร
     if(result.success && currentItem.check(result.output, code)){
-      // ผ่าน! บันทึกความก้าวหน้า + ฉลอง (ส่ง output ไปโชว์ในกล่องชนะด้วย)
+      // ผ่าน! บันทึกความก้าวหน้า
       if(currentKind === "project") markProjectComplete(currentItem.id);
       else markComplete(currentItem.id);
-      showWinModal(currentItem.winMessage, result.output);
+      if(already){
+        // เคยผ่านแล้วและกำลังเล่นต่อ -> ไม่เด้งกล่องซ้ำ/ไม่มี confetti
+        // แค่โชว์ผลลัพธ์ปกติ (runner เขียนให้แล้ว) + คงแถบ "ไปต่อ" ไว้
+        revealDoneBar();
+      } else {
+        // ครั้งแรกที่ผ่าน -> ฉลอง + โชว์ผลลัพธ์ในกล่องชนะ
+        showWinModal(currentItem.winMessage, result.output);
+      }
     } else if(!result.success){
-      // มี error -> นับ error ซ้ำเพื่อเผยคำใบ้อัตโนมัติ
-      attempts++;
-      onErrorForHint((result.error || "").split(":")[0]);
-      maybeEncourage();
+      // มี error
+      if(!already){
+        // ยังไม่ผ่าน -> พฤติกรรมเดิม: นับ error ซ้ำเพื่อเผยคำใบ้อัตโนมัติ + ให้กำลังใจ
+        attempts++;
+        onErrorForHint((result.error || "").split(":")[0]);
+        maybeEncourage();
+      }
+      // ผ่านแล้วและกำลังเล่นต่อ -> โชว์ error แปลไทยเฉย ๆ (runner ทำให้แล้ว) ไม่ขอคำใบ้ใหม่
     } else {
-      // รันได้แต่ยังไม่ตรงโจทย์ -> สะกิดเบา ๆ (ไม่ใช่ error)
-      attempts++;
-      showNudge("ยังไม่ผ่าน แต่ใกล้แล้ว ลองอ่านโจทย์อีกครั้งแล้วปรับโค้ดดูนะ");
-      maybeEncourage();
+      // รันได้แต่ยังไม่ตรงโจทย์
+      if(!already){
+        // ยังไม่ผ่าน -> สะกิดเบา ๆ (ไม่ใช่ error)
+        attempts++;
+        showNudge("ยังไม่ผ่าน แต่ใกล้แล้ว ลองอ่านโจทย์อีกครั้งแล้วปรับโค้ดดูนะ");
+        maybeEncourage();
+      }
+      // ผ่านแล้ว -> โชว์ผลลัพธ์ปกติ (runner เขียนให้แล้ว) ไม่สะกิดว่า "ยังไม่ผ่าน"
     }
   });
 }
@@ -448,7 +471,23 @@ function showExampleAgain(){
   show.classList.add("flash");
 }
 
-/* ---------- โมดอลชนะ + confetti ---------- */
+/* ---------- โมดอลชนะ + แถบ "ผ่านแล้ว" + confetti ---------- */
+
+// โหนดถัดไปตามลำดับจริงของแผนที่ (mission สลับ project ตาม afterMission) หรือ null ถ้าเป็นโหนดสุดท้าย
+function getNextNode(){
+  const seq = buildPathNodes();
+  const idx = seq.findIndex(function(nd){ return nd.kind === currentKind && nd.id === currentItem.id; });
+  return (idx >= 0 && idx < seq.length - 1) ? seq[idx + 1] : null;
+}
+function nodeUrl(node){
+  return node.kind === "project" ? ("lesson.html?project=" + node.id) : ("lesson.html?id=" + node.id);
+}
+
+// ด่าน/โปรเจกต์ปัจจุบันผ่านมาแล้วหรือยัง
+function isItemCompleted(){
+  return currentKind === "project" ? isProjectCompleted(currentItem.id) : isCompleted(currentItem.id);
+}
+
 function showWinModal(message, output){
   const modal = el("win-modal");
   if(!modal) return;
@@ -462,11 +501,7 @@ function showWinModal(message, output){
     else { winOut.hidden = true; }
   }
 
-  // หาโหนดถัดไปจาก "ลำดับจริงของแผนที่" (mission สลับ project ตาม afterMission)
-  const seq = buildPathNodes();
-  const idx = seq.findIndex(function(nd){ return nd.kind === currentKind && nd.id === currentItem.id; });
-  const next = (idx >= 0 && idx < seq.length - 1) ? seq[idx + 1] : null;
-
+  const next = getNextNode();
   const heading = el("win-heading");
   const nextBtn = el("win-next");
 
@@ -474,11 +509,8 @@ function showWinModal(message, output){
     // ยังมีด่านถัดไป (จะเป็น mission, มินิโปรเจกต์ หรือ Capstone ก็ได้)
     if(heading) heading.textContent = "ผ่านแล้ว!";
     el("win-message").textContent = message;
-    const nextUrl = (next.kind === "project")
-      ? ("lesson.html?project=" + next.id)
-      : ("lesson.html?id=" + next.id);
     nextBtn.hidden = false;
-    nextBtn.onclick = function(){ go(nextUrl); };
+    nextBtn.onclick = function(){ go(nodeUrl(next)); };
   } else {
     // โหนดสุดท้าย (Capstone) -> จบหลักสูตร ไม่มีปุ่มไปต่อ
     if(heading) heading.textContent = "จบหลักสูตรแล้ว";
@@ -486,12 +518,104 @@ function showWinModal(message, output){
     nextBtn.hidden = true;
   }
 
-  el("win-map").onclick = function(){ go("map.html"); };
-
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   fireConfetti();
-  nextBtn.hidden ? el("win-map").focus() : nextBtn.focus();
+  (nextBtn.hidden ? el("win-stay") : nextBtn).focus();
+}
+
+// ปิดกล่องชนะ -> "อยู่เล่นต่อ" ในด่านเดิม + เผยแถบ "ผ่านแล้ว ไปต่อ" ค้างไว้
+function closeWinModal(){
+  const modal = el("win-modal");
+  if(modal){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); }
+  revealDoneBar();
+  const runBtn = el("run-btn"); if(runBtn) runBtn.focus();
+}
+
+// เผยแถบ "ผ่านด่านนี้แล้ว — ไปด่านถัดไป" (หรือ "ผ่านครบทุกด่าน" ถ้าเป็นโหนดสุดท้าย)
+function revealDoneBar(){
+  const bar = el("done-bar");
+  if(!bar) return;
+  const next = getNextNode();
+  const label = el("done-bar-label");
+  const ic = el("done-bar-ic");
+  const btn = el("done-next");
+  if(ic) ic.innerHTML = ICON.check;
+  if(next){
+    if(label) label.textContent = "ผ่านด่านนี้แล้ว";
+    if(btn){
+      btn.innerHTML = "ไปด่านถัดไป " + ICON.arrowR;
+      btn.onclick = function(){ go(nodeUrl(next)); };
+    }
+  } else {
+    if(label) label.textContent = "ผ่านครบทุกด่านแล้ว";
+    if(btn){
+      btn.textContent = "กลับไปที่แผนที่";
+      btn.onclick = function(){ go("map.html"); };
+    }
+  }
+  bar.hidden = false;
+  collapseHintsAfterWin();   // ผ่านแล้ว -> ปิดปุ่มขอคำใบ้ + ยุบคำใบ้เก่าเป็นแถบพับ
+}
+
+// เมื่อผ่านด่านแล้ว: ปิดทางขอคำใบ้ใหม่ และยุบคำใบ้ที่เคยดูเป็นแถบเล็ก ๆ พับไว้
+function collapseHintsAfterWin(){
+  // ปิดปุ่ม "ขอคำใบ้" (ผ่านแล้ว ไม่มีโจทย์ให้ใบ้อีก)
+  const hintBtn = el("hint-btn");
+  if(hintBtn){ hintBtn.hidden = true; hintBtn.classList.remove("pulse"); }
+
+  if(hintsCollapsed) return;   // ยุบไปแล้ว ไม่ต้องทำซ้ำ
+  hintsCollapsed = true;
+
+  const box = el("hint-box");
+  if(!box) return;
+  const items = Array.prototype.slice.call(box.querySelectorAll(".hint-item"));
+  if(items.length === 0){
+    box.hidden = true;         // ไม่เคยกดดูคำใบ้ -> ไม่ต้องมีแถบ
+    return;
+  }
+
+  // สร้างแถบหัว "คำใบ้ที่เคยดู (N)" + ตัวคำใบ้ที่ซ่อนไว้ (ค่าเริ่มต้น = พับ เพื่อให้จอโล่ง)
+  box.innerHTML = "";
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "hint-collapse-toggle";
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.innerHTML = '<span>คำใบ้ที่เคยดู (' + items.length + ')</span>' +
+                     '<span class="hint-caret">' + ICON.chevron + '</span>';
+
+  const body = document.createElement("div");
+  body.className = "hint-collapsed-body";
+  body.hidden = true;
+  items.forEach(function(it){ it.style.animation = ""; body.appendChild(it); });
+
+  toggle.addEventListener("click", function(){
+    const opening = body.hidden;          // ตอนนี้พับอยู่ -> กำลังจะกาง
+    body.hidden = !opening;
+    toggle.setAttribute("aria-expanded", opening ? "true" : "false");
+    toggle.classList.toggle("open", opening);
+  });
+
+  box.appendChild(toggle);
+  box.appendChild(body);
+  box.hidden = false;
+}
+
+// ผูกปุ่ม/คีย์ของกล่องชนะ ครั้งเดียวตอนเข้าหน้า (กากบาท / อยู่เล่นต่อ / แผนที่ / Esc / คลิกพื้นหลัง)
+function setupWinModal(){
+  const modal = el("win-modal");
+  const closeBtn = el("win-close");
+  const stayBtn = el("win-stay");
+  const mapBtn = el("win-map");
+  if(closeBtn){ closeBtn.innerHTML = ICON.close; closeBtn.addEventListener("click", closeWinModal); }
+  if(stayBtn) stayBtn.addEventListener("click", closeWinModal);   // "อยู่เล่นต่อ" = ปิดกล่อง
+  if(mapBtn)  mapBtn.addEventListener("click", function(){ go("map.html"); });
+  // คลิกพื้นหลังมืด ๆ นอกการ์ด = ปิด
+  if(modal) modal.addEventListener("click", function(e){ if(e.target === modal) closeWinModal(); });
+  // Esc = ปิด (เฉพาะตอนกล่องชนะเปิดอยู่)
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && modal && modal.classList.contains("open")) closeWinModal();
+  });
 }
 
 // confetti เบา ๆ ด้วย canvas (รูปทรงล้วน ไม่มี emoji) แล้วหยุดตาม config

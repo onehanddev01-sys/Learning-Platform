@@ -218,6 +218,14 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 .hint-ic{ color:var(--gold); flex:0 0 auto; }
 .pulse{ animation:pulse 1.2s ease infinite; }
 
+/* แถบคำใบ้แบบพับ (หลังผ่านด่าน) — ค่าเริ่มต้นพับไว้ให้จอโล่ง กดกางดูซ้ำได้ */
+.hint-collapse-toggle{ display:flex; align-items:center; justify-content:space-between; gap:var(--s2);
+  width:100%; background:transparent; border:none; cursor:pointer; padding:0;
+  font-family:'IBM Plex Sans Thai',sans-serif; font-weight:600; font-size:15px; color:var(--ink); }
+.hint-caret{ display:flex; color:var(--muted); transition:transform .2s ease; }
+.hint-collapse-toggle.open .hint-caret{ transform:rotate(180deg); }
+.hint-collapsed-body{ margin-top:var(--s3); }
+
 /* หน้าจอด่านที่ล็อก */
 .locked-screen{ max-width:480px; margin:var(--s8) auto; text-align:center; }
 .locked-screen .locked-ic{ color:var(--muted); display:flex; justify-content:center; margin-bottom:var(--s3); }
@@ -228,8 +236,14 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
   display:none; align-items:center; justify-content:center; padding:var(--s4);
 }
 .modal-backdrop.open{ display:flex; animation:fadeIn .25s ease; }
-.win-card{ background:var(--card); border-radius:var(--r-card); box-shadow:var(--shadow-lift);
+.win-card{ position:relative; background:var(--card); border-radius:var(--r-card); box-shadow:var(--shadow-lift);
   max-width:440px; width:100%; padding:var(--s6); text-align:center; }
+
+/* ปุ่มกากบาทปิดมุมขวาบนของกล่อง (ทำงานเหมือน "อยู่เล่นต่อ") */
+.modal-close{ position:absolute; top:10px; right:10px; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  background:transparent; border:none; border-radius:50%; cursor:pointer; color:var(--muted); }
+.modal-close:hover{ background:var(--surface); color:var(--ink); }
 .win-icon{ width:72px; height:72px; border-radius:50%; background:var(--brand-soft); color:var(--success);
   display:flex; align-items:center; justify-content:center; margin:0 auto var(--s4); }
 .win-card h2{ color:var(--ink); }
@@ -253,6 +267,16 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
   margin-bottom:var(--s3); }
 .input-field:focus{ outline:none; border-color:var(--brand); background:var(--card); }
 .input-warn{ color:var(--caution); font-size:15px; margin:0 0 var(--s3); }
+
+/* แถบ "ผ่านแล้ว — ไปด่านถัดไป" ค้างบนหน้าเรียน หลังปิดกล่องชนะ (หรือกลับมาด่านที่ผ่านแล้ว) */
+.done-bar{ display:flex; align-items:center; justify-content:space-between; gap:var(--s3);
+  background:var(--brand-soft); border:1px solid var(--brand);
+  border-radius:var(--r-btn); padding:var(--s3) var(--s4); margin-bottom:var(--s4); }
+.done-bar-text{ display:flex; align-items:center; gap:var(--s2);
+  color:var(--brand-dark); font-family:'IBM Plex Sans Thai',sans-serif; font-weight:600; }
+.done-bar-ic{ color:var(--success); display:flex; }
+.done-bar .btn{ flex:0 0 auto; }
+@media (max-width:560px){ .done-bar{ flex-direction:column; align-items:stretch; text-align:center; } }
 
 /* ---------- 9) Toast ---------- */
 #toast{

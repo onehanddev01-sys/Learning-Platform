@@ -35,6 +35,13 @@
 
       <!-- ฝั่งขวา: เขียนโค้ด + รัน + ผลลัพธ์ -->
       <section class="editor-panel">
+
+        <!-- แถบ "ผ่านแล้ว" ค้างไว้ กดไปต่อได้ทุกเมื่อ (โผล่หลังผ่านด่าน) -->
+        <div id="done-bar" class="done-bar" hidden>
+          <span class="done-bar-text"><span id="done-bar-ic" class="done-bar-ic"></span> <span id="done-bar-label">ผ่านด่านนี้แล้ว</span></span>
+          <button id="done-next" class="btn btn-primary">ไปด่านถัดไป</button>
+        </div>
+
         <div class="panel-label">เขียนโค้ดของคุณตรงนี้</div>
         <div class="editor-box">
           <textarea id="code-input"></textarea>
@@ -65,6 +72,7 @@
   <!-- โมดอลชนะ -->
   <div id="win-modal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="win-heading">
     <div class="win-card">
+      <button id="win-close" class="modal-close" type="button" aria-label="ปิด แล้วอยู่เล่นต่อ"></button>
       <div id="win-icon" class="win-icon"></div>
       <h2 id="win-heading">ผ่านแล้ว!</h2>
       <div id="win-output" class="win-output" hidden>
@@ -74,7 +82,8 @@
       <p id="win-message" class="win-msg"></p>
       <div class="win-actions">
         <button id="win-next" class="btn btn-primary">ไปด่านถัดไป</button>
-        <button id="win-map" class="btn btn-secondary">กลับไปที่แผนที่</button>
+        <button id="win-stay" class="btn btn-secondary">อยู่เล่นต่อ</button>
+        <button id="win-map" class="btn btn-ghost">กลับไปที่แผนที่</button>
       </div>
     </div>
   </div>
