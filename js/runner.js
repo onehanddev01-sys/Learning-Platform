@@ -32,6 +32,7 @@ function runPython(code, onDone){
   if (BEDROCK_CONFIG.runtime.clearOutputBeforeRun && txt) txt.textContent = "";
   if (box){ box.classList.remove("error"); box.classList.remove("empty"); box.classList.remove("nudge"); }
   if (typeof clearErrorLines === "function") clearErrorLines(); // ล้างไฮไลต์บรรทัดผิดของรอบก่อน
+  if (typeof clearRunNote === "function") clearRunNote();        // ล้างแถบสถานะของรอบก่อน
 
   // จำกัดเวลาทำงาน กันลูป while ที่ไม่มีวันหยุดทำเบราว์เซอร์ค้าง
   Sk.execLimit = BEDROCK_CONFIG.runtime.execLimitMs;
@@ -56,12 +57,14 @@ function runPython(code, onDone){
     },
     function(err){
       const raw = err.toString();
+      // ผลลัพธ์ที่โค้ดพิมพ์ออกมาก่อนจะสะดุด (ถ้ามี) -> เก็บไว้โชว์ในช่องผลลัพธ์เสมอ
+      // (ไม่ใส่ placeholder "กดปุ่มรันโค้ด" ตอน error เพราะชวนงง ปล่อยช่องว่างแล้วให้แถบสถานะอธิบายแทน)
+      const out = txt ? txt.textContent : "";
 
       // กรณีผู้ใช้กด "ยกเลิก" ในกล่องกรอกข้อมูล -> ไม่ใช่ error และไม่ใช่ผ่าน
       if (raw.indexOf("__BEDROCK_INPUT_CANCEL__") !== -1){
-        if (box){ box.classList.remove("error"); box.classList.add("nudge"); }
-        if (txt) txt.textContent = "ยกเลิกการรันแล้ว กดรันใหม่เมื่อพร้อมได้เลย";
-        onDone({ success:false, output:"", error:"__CANCEL__" });
+        if (typeof setRunNote === "function") setRunNote("ยกเลิกการรันแล้ว กดรันใหม่เมื่อพร้อมได้เลย", "cancel");
+        onDone({ success:false, output:out, error:"__CANCEL__" });
         return;
       }
 
@@ -72,11 +75,11 @@ function runPython(code, onDone){
 
       let msg = translateError(raw, codeLine);          // แปลไทยก่อนแสดงเสมอ
       if (lineNo) msg = "ที่บรรทัด " + lineNo + ": " + msg;   // บอกตำแหน่งให้หาง่าย
-      if (txt) txt.textContent = msg;
-      if (box) box.classList.add("error");
+      // แสดง error ใน "แถบสถานะ" แยกต่างหาก -> ช่องผลลัพธ์ยังโชว์ output จริงไว้
+      if (typeof setRunNote === "function") setRunNote(msg, "error");
       if (lineNo && typeof markErrorLine === "function") markErrorLine(lineNo); // ไฮไลต์ใน CodeMirror
 
-      onDone({ success:false, output:(txt ? txt.textContent : ""), error:raw });
+      onDone({ success:false, output:out, error:raw });
     }
   );
 }

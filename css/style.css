@@ -210,6 +210,17 @@ code, pre, .mono{ font-family:'JetBrains Mono','IBM Plex Mono',monospace; }
 .output-icon{ color:var(--caution); display:none; flex:0 0 auto; }
 .output-box.error .output-icon{ display:flex; }
 
+/* แถบบอกสถานะการรัน — อยู่ใต้ช่องผลลัพธ์ ไม่ทับ output จริง
+   nudge=ยังไม่ผ่าน (teal) / error=ผิดพลาด (ส้ม) / cancel=ยกเลิก (เทา) */
+.run-note{ display:flex; gap:var(--s2); align-items:flex-start; margin:var(--s2) 0 0;
+  font-size:15px; line-height:1.5; border-radius:var(--r-btn); padding:var(--s2) var(--s3);
+  border-left:4px solid transparent; animation:fadeIn .3s ease; }   /* จางเข้า ไม่สั่น ไม่กระพริบ */
+.run-note.nudge{ color:var(--brand-dark); background:var(--brand-soft); border-left-color:var(--brand); }
+.run-note.error{ color:var(--caution); background:#FDF3EA; border-left-color:var(--caution); }
+.run-note.cancel{ color:var(--muted); background:var(--surface); border-left-color:var(--line); }
+.run-note-ic{ flex:0 0 auto; color:var(--caution); display:flex; }
+.run-note-text{ flex:1; }
+
 /* กล่องคำใบ้ */
 .hint-box{ margin-top:var(--s4); background:#FFFBEE; border:1px solid #F3E4B5;
   border-radius:var(--r-btn); padding:var(--s3) var(--s4); }

@@ -421,9 +421,9 @@ function handleRun(){
     } else {
       // รันได้แต่ยังไม่ตรงโจทย์
       if(!already){
-        // ยังไม่ผ่าน -> สะกิดเบา ๆ (ไม่ใช่ error)
+        // ยังไม่ผ่าน -> สะกิดเบา ๆ ในแถบสถานะ (ช่องผลลัพธ์ยังโชว์ output จริงอยู่)
         attempts++;
-        showNudge("ยังไม่ผ่าน แต่ใกล้แล้ว ลองอ่านโจทย์อีกครั้งแล้วปรับโค้ดดูนะ");
+        setRunNote("ยังไม่ผ่าน แต่ใกล้แล้ว ลองอ่านโจทย์อีกครั้งแล้วปรับโค้ดดูนะ", "nudge");
         maybeEncourage();
       }
       // ผ่านแล้ว -> โชว์ผลลัพธ์ปกติ (runner เขียนให้แล้ว) ไม่สะกิดว่า "ยังไม่ผ่าน"
@@ -444,13 +444,19 @@ function showHintText(text, levelNo, totalLevels){
   if(!reducedMotion) item.style.animation = "fadeInUp .4s ease both";
 }
 
-// ข้อความสะกิดเบา ๆ เมื่อรันได้แต่ยังไม่ผ่านโจทย์
-function showNudge(msg){
-  const box = el("output");
-  const txt = el("output-text");
-  if(box){ box.classList.remove("error"); box.classList.add("nudge"); }
-  if(txt){ txt.textContent = msg; }
+// แถบบอกสถานะการรัน — แยกจากช่องผลลัพธ์ เพื่อไม่ทับ output จริงที่โค้ดพิมพ์ออกมา
+// kind: "nudge" (ยังไม่ผ่าน) | "error" (ผิดพลาด) | "cancel" (ยกเลิก) | "" (ล้างทิ้ง)
+function setRunNote(msg, kind){
+  const note = el("run-note");
+  if(!note) return;
+  if(!msg){ note.hidden = true; note.textContent = ""; note.className = "run-note"; return; }
+  note.className = "run-note " + (kind || "");
+  note.innerHTML = (kind === "error" ? '<span class="run-note-ic">' + ICON.warn + '</span>' : '') +
+                   '<span class="run-note-text"></span>';
+  note.querySelector(".run-note-text").textContent = msg;
+  note.hidden = false;
 }
+function clearRunNote(){ setRunNote("", ""); }
 
 // ให้กำลังใจเบา ๆ เมื่อพยายามหลายครั้ง (ไม่ลงโทษ)
 function maybeEncourage(){
