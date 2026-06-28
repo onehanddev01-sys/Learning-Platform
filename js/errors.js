@@ -33,6 +33,52 @@ function translateError(raw, codeLine){
     return "การเรียกใช้ print ต้องใช้วงเล็บ ( ) ครอบนะ ไม่ใช่ [ ] หรือ { }";
   }
 
+  // ── อาการเรื่องการตั้งชื่อตัวแปร / การกำหนดค่า (พบบ่อยใน Mission 2) ──
+  // ตรวจจาก codeLine ก่อน เพราะแม่นกว่าการเดาจาก error ดิบ
+  // สำคัญ: ต้องเป็น "=" ที่กำหนดค่าจริง ๆ เท่านั้น ไม่ใช่ == >= <= != += ฯลฯ
+  // และไม่ใช่ "=" ที่อยู่ในสตริง (เช่น print("a = b")) ไม่งั้นจะแปลผิดในด่านอื่น
+  if (line){
+    // กลบเนื้อหาในเครื่องหมายคำพูดก่อน (เก็บความยาวไว้เท่าเดิมเพื่อให้ตำแหน่งตรง)
+    const masked = line.replace(/"[^"]*"/g, function(m){ return '"' + " ".repeat(m.length - 2) + '"'; })
+                       .replace(/'[^']*'/g, function(m){ return "'" + " ".repeat(m.length - 2) + "'"; });
+    // หาตำแหน่ง "=" ตัวแรกที่เป็นการกำหนดค่า (ไม่ใช่ ==, >=, <=, !=, +=, -= ...)
+    let eqAt = -1;
+    for (let i = 0; i < masked.length; i++){
+      if (masked[i] !== "=") continue;
+      if (masked[i + 1] === "=") { i++; continue; }                  // == -> ไม่ใช่การกำหนดค่า
+      if ("=<>!+-*/%&|^".indexOf(masked[i - 1]) !== -1) continue;    // >= <= != += ... -> ข้าม
+      eqAt = i; break;
+    }
+    if (eqAt !== -1){
+      const beforeEq = line.slice(0, eqAt).trim();   // ชื่อกล่องที่อยู่ก่อน =
+      const afterEq  = line.slice(eqAt + 1).trim();  // ค่าที่อยู่หลัง =
+
+      // 1) ลืมใส่ค่าหลัง =  เช่น  age =
+      if (afterEq === ""){
+        return "ตั้งชื่อกล่องไว้แล้ว แต่ยังไม่ได้ใส่ค่าให้นะ ลองใส่ค่าหลังเครื่องหมาย = เช่น age = 18";
+      }
+      // 2) ชื่อตัวแปรมีเว้นวรรค  เช่น  my age = 20
+      if (/\s/.test(beforeEq) && !/^(if|elif|else|for|while|def|return|print|import)\b/.test(beforeEq)){
+        return "ชื่อกล่อง (ตัวแปร) ห้ามมีเว้นวรรคนะ ลองเขียนติดกัน หรือใช้ _ คั่น เช่น my_age = 20";
+      }
+      // 3) ชื่อตัวแปรขึ้นต้นด้วยตัวเลข  เช่น  1age = 20
+      if (/^[0-9]/.test(beforeEq)){
+        return "ชื่อกล่อง (ตัวแปร) ห้ามขึ้นต้นด้วยตัวเลขนะ ลองขึ้นต้นด้วยตัวอักษร เช่น age1 = 20";
+      }
+      // 4) ชื่อตัวแปรมีเครื่องหมายที่ใช้ไม่ได้ เช่น ขีด -  (age-now = 20)
+      if (beforeEq !== "" && /[^A-Za-z0-9_]/.test(beforeEq)){
+        return "ชื่อกล่อง (ตัวแปร) ใช้ได้แค่ตัวอักษร ตัวเลข และ _ เท่านั้นนะ ลองเอาเครื่องหมายอื่นออก เช่น age_now = 20";
+      }
+      // 5) ใช้คำสงวน/คำพิเศษของ Python มาตั้งชื่อ เช่น True = 20 / print = 20 / list = 3
+      const reserved = ["True","False","None","and","or","not","if","else","elif",
+                        "for","while","def","return","import","class","try","except",
+                        "print","input","list","dict","str","int","float","type","len"];
+      if (reserved.includes(beforeEq)){
+        return "คำนี้เป็นคำพิเศษของ Python ใช้ตั้งชื่อกล่องไม่ได้นะ ลองเปลี่ยนเป็นชื่ออื่น เช่น age = 20";
+      }
+    }
+  }
+
   // SyntaxError มีหลายกรณีย่อย แยกข้อความให้ตรงอาการ
   // เรียงจากเฉพาะเจาะจง -> กว้าง เพื่อจับอาการมือใหม่ให้ตรงก่อน fallback
   if (type === "SyntaxError"){
