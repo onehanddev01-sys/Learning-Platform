@@ -52,29 +52,43 @@ function translateError(raw, codeLine){
     if (eqAt !== -1){
       const beforeEq = line.slice(0, eqAt).trim();   // ชื่อกล่องที่อยู่ก่อน =
       const afterEq  = line.slice(eqAt + 1).trim();  // ค่าที่อยู่หลัง =
+      const firstTok = beforeEq.split(/\s+/)[0];      // คำแรกก่อน = (ดูว่าเป็นคำสั่งพิเศษไหม)
 
-      // 1) ลืมใส่ค่าหลัง =  เช่น  age =
-      if (afterEq === ""){
-        return "ตั้งชื่อกล่องไว้แล้ว แต่ยังไม่ได้ใส่ค่าให้นะ ลองใส่ค่าหลังเครื่องหมาย = เช่น age = 18";
+      // ใช้ = ตัวเดียวในเงื่อนไข ที่จริงต้องใช้ == (พลาดบ่อยตอนเรียน if/elif/while)
+      if (firstTok === "if" || firstTok === "elif" || firstTok === "while"){
+        return "ในเงื่อนไข if / elif / while ใช้ == (เท่ากับสองตัว) เพื่อ \"เปรียบเทียบ\" นะ ไม่ใช่ = ตัวเดียวที่แปลว่า \"กำหนดค่า\" เช่น if score == 50:";
       }
-      // 2) ชื่อตัวแปรมีเว้นวรรค  เช่น  my age = 20
-      if (/\s/.test(beforeEq) && !/^(if|elif|else|for|while|def|return|print|import)\b/.test(beforeEq)){
-        return "ชื่อกล่อง (ตัวแปร) ห้ามมีเว้นวรรคนะ ลองเขียนติดกัน หรือใช้ _ คั่น เช่น my_age = 20";
-      }
-      // 3) ชื่อตัวแปรขึ้นต้นด้วยตัวเลข  เช่น  1age = 20
-      if (/^[0-9]/.test(beforeEq)){
-        return "ชื่อกล่อง (ตัวแปร) ห้ามขึ้นต้นด้วยตัวเลขนะ ลองขึ้นต้นด้วยตัวอักษร เช่น age1 = 20";
-      }
-      // 4) ชื่อตัวแปรมีเครื่องหมายที่ใช้ไม่ได้ เช่น ขีด -  (age-now = 20)
-      if (beforeEq !== "" && /[^A-Za-z0-9_]/.test(beforeEq)){
-        return "ชื่อกล่อง (ตัวแปร) ใช้ได้แค่ตัวอักษร ตัวเลข และ _ เท่านั้นนะ ลองเอาเครื่องหมายอื่นออก เช่น age_now = 20";
-      }
-      // 5) ใช้คำสงวน/คำพิเศษของ Python มาตั้งชื่อ เช่น True = 20 / print = 20 / list = 3
-      const reserved = ["True","False","None","and","or","not","if","else","elif",
-                        "for","while","def","return","import","class","try","except",
-                        "print","input","list","dict","str","int","float","type","len"];
-      if (reserved.includes(beforeEq)){
-        return "คำนี้เป็นคำพิเศษของ Python ใช้ตั้งชื่อกล่องไม่ได้นะ ลองเปลี่ยนเป็นชื่ออื่น เช่น age = 20";
+
+      // ขึ้นต้นด้วยคำสั่งพิเศษอื่น (for/def/return/else/...) = ไม่ใช่การตั้งชื่อตัวแปร
+      // ข้ามการตรวจชื่อตัวแปรไป ปล่อยให้ตกไปจัดการแบบ SyntaxError ตามปกติ
+      const stmtKw = ["else","for","def","return","class","with","try","except","finally",
+                      "import","from","global","nonlocal","pass","break","continue",
+                      "lambda","del","raise","yield","assert"];
+      if (stmtKw.indexOf(firstTok) === -1){
+
+        // 1) ลืมใส่ค่าหลัง =  เช่น  age =
+        if (afterEq === ""){
+          return "ตั้งชื่อกล่องไว้แล้ว แต่ยังไม่ได้ใส่ค่าให้นะ ลองใส่ค่าหลังเครื่องหมาย = เช่น age = 18";
+        }
+        // 2) ชื่อตัวแปรมีเว้นวรรค  เช่น  my age = 20
+        if (/\s/.test(beforeEq)){
+          return "ชื่อกล่อง (ตัวแปร) ห้ามมีเว้นวรรคนะ ลองเขียนติดกัน หรือใช้ _ คั่น เช่น my_age = 20";
+        }
+        // 3) ชื่อตัวแปรขึ้นต้นด้วยตัวเลข  เช่น  1age = 20
+        if (/^[0-9]/.test(beforeEq)){
+          return "ชื่อกล่อง (ตัวแปร) ห้ามขึ้นต้นด้วยตัวเลขนะ ลองขึ้นต้นด้วยตัวอักษร เช่น age1 = 20";
+        }
+        // 4) ชื่อตัวแปรมีเครื่องหมายที่ใช้ไม่ได้ เช่น ขีด -  (age-now = 20)
+        if (beforeEq !== "" && /[^A-Za-z0-9_]/.test(beforeEq)){
+          return "ชื่อกล่อง (ตัวแปร) ใช้ได้แค่ตัวอักษร ตัวเลข และ _ เท่านั้นนะ ลองเอาเครื่องหมายอื่นออก เช่น age_now = 20";
+        }
+        // 5) ใช้คำสงวน/คำพิเศษของ Python มาตั้งชื่อ เช่น True = 20 / print = 20 / list = 3
+        const reserved = ["True","False","None","and","or","not","if","else","elif",
+                          "for","while","def","return","import","class","try","except",
+                          "print","input","list","dict","str","int","float","type","len"];
+        if (reserved.includes(beforeEq)){
+          return "คำนี้เป็นคำพิเศษของ Python ใช้ตั้งชื่อกล่องไม่ได้นะ ลองเปลี่ยนเป็นชื่ออื่น เช่น age = 20";
+        }
       }
     }
   }
@@ -106,11 +120,27 @@ function translateError(raw, codeLine){
       }
     }
 
-    // (4) เปิดวงเล็บ/เครื่องหมายไว้แต่ปิดไม่ครบ (Skulpt มักรายงานเป็น EOF)
+    // (4) f-string เปิดปีกกา { ไว้แต่ลืมปิด } เช่น print(f"คะแนน {score")
+    if (lower.includes("f-string"))
+      return "ใน f-string ที่เปิดปีกกา { ไว้ ต้องปิดด้วย } ให้ครบนะ เช่น print(f\"คะแนน {score}\")";
+
+    // (5) ใช้ return นอกฟังก์ชัน — return ต้องอยู่ข้างใน def ที่ย่อหน้าเข้าไป
+    if (lower.includes("'return' outside function"))
+      return "คำสั่ง return ต้องอยู่ \"ข้างใน\" ฟังก์ชัน (ใต้ def ที่ย่อหน้าเข้าไป 4 ช่อง) นะ";
+
+    // (6) ลูป for ขาดคำว่า in เช่น for i range(3):  (ลืม in)
+    if (/^\s*for\b/.test(line) && !/\bin\b/.test(line))
+      return "ลูป for ต้องมีคำว่า in นะ เช่น for i in range(3):";
+
+    // (7) สร้างฟังก์ชันด้วย def แต่ลืมวงเล็บ () หลังชื่อ เช่น def greet:
+    if (/^\s*def\b/.test(line) && !line.includes("("))
+      return "การสร้างฟังก์ชันด้วย def ต้องมีวงเล็บ ( ) หลังชื่อนะ เช่น def greet():";
+
+    // (8) เปิดวงเล็บ/เครื่องหมายไว้แต่ปิดไม่ครบ (Skulpt มักรายงานเป็น EOF)
     if (lower.includes("eof") || lower.includes("multi-line"))
       return "ดูเหมือนเปิดวงเล็บหรือเครื่องหมายไว้แต่ยังปิดไม่ครบนะ ลองนับ ( ) หรือ \" \" ให้เท่ากัน";
 
-    // (5) fallback กลาง ๆ — ไม่ชี้นำเรื่อง : อีกต่อไป (กันแปลผิดในบทที่ยังไม่สอน if/for/def)
+    // (9) fallback กลาง ๆ — ไม่ชี้นำเรื่อง : อีกต่อไป (กันแปลผิดในบทที่ยังไม่สอน if/for/def)
     return "รูปแบบบรรทัดนี้ยังไม่ถูกหลักภาษา Python ลองเทียบกับตัวอย่างด้านบนทีละตัวอักษร โดยเฉพาะวงเล็บ ( ) และเครื่องหมายคำพูด \" \" ว่าครบและตรงกันไหม";
   }
 
