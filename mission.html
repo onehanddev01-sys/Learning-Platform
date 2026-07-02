@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บทเรียน — Python เริ่มจากศูนย์</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.css"
+        onerror="this.onerror=null;this.href='vendor/codemirror/codemirror.min.css'">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="mission-page">
+
+  <header class="topbar">
+    <a class="topbar-back" href="map.html">แผนที่บทเรียน</a>
+    <div class="topbar-title">Python เริ่มจากศูนย์</div>
+    <span id="module-chip" class="module-chip"></span>
+  </header>
+
+  <main class="mission-layout">
+    <!-- คอลัมน์ซ้าย: เนื้อหาบทเรียน (Hook → Show → Explain → Task) -->
+    <section id="lesson-col" class="lesson-col"></section>
+
+    <!-- คอลัมน์ขวา: Editor + Output -->
+    <section class="work-col">
+      <div class="editor-card">
+        <div class="editor-head">
+          <span class="editor-title">โค้ดของคุณ</span>
+          <span class="editor-shortcut">คีย์ลัด Ctrl+Enter</span>
+          <button id="run-btn" class="btn btn-run" type="button">รันโค้ด</button>
+        </div>
+        <textarea id="code-editor" spellcheck="false"></textarea>
+      </div>
+      <div class="output-card">
+        <div class="output-head">ผลลัพธ์</div>
+        <div id="output-panel" class="output-panel"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- แผงคำใบ้ (เลื่อนขึ้นเหนือ Task Bar) -->
+  <aside id="hint-panel" class="hint-panel hidden">
+    <div class="hint-head">
+      <span>คำใบ้</span>
+      <button id="hint-close-btn" class="hint-close" type="button" aria-label="ปิดคำใบ้">ปิด</button>
+    </div>
+    <div id="hint-note" class="hint-note"></div>
+    <div id="hint-list" class="hint-list"></div>
+    <button id="hint-more-btn" class="btn btn-secondary btn-small" type="button">ขอคำใบ้เพิ่ม</button>
+  </aside>
+
+  <!-- Task Bar ติดขอบล่างตลอดเวลา -->
+  <footer class="taskbar">
+    <span class="taskbar-label">ภารกิจ</span>
+    <span id="taskbar-text" class="taskbar-text"></span>
+    <button id="hint-btn" class="btn btn-hint" type="button">ขอคำใบ้</button>
+    <button id="taskbar-next-btn" class="btn btn-primary hidden" type="button">ด่านถัดไป</button>
+  </footer>
+
+  <!-- หน้าต่างแสดงความสำเร็จ -->
+  <div id="win-overlay" class="win-overlay hidden">
+    <div class="win-card">
+      <div id="win-star" class="win-star"></div>
+      <h2 id="win-title">ภารกิจสำเร็จ!</h2>
+      <p id="win-message"></p>
+      <div class="win-actions">
+        <button id="win-next-btn" class="btn btn-primary" type="button">ด่านถัดไป</button>
+        <button id="win-map-btn" class="btn btn-secondary" type="button">กลับแผนที่</button>
+        <button id="win-close-btn" class="btn btn-ghost" type="button">อยู่ทบทวนต่อ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skulpt: โหลดจาก CDN ก่อน ถ้าไม่สำเร็จ (ออฟไลน์) ใช้สำเนาใน vendor/ -->
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script>window.Sk || document.write('<script src="vendor/skulpt.min.js"><\/script>');</script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <script>(window.Sk && Sk.builtinFiles) || document.write('<script src="vendor/skulpt-stdlib.js"><\/script>');</script>
+
+  <!-- CodeMirror 5: CDN ก่อน แล้วค่อย fallback เช่นกัน -->
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.js"></script>
+  <script>window.CodeMirror || document.write('<script src="vendor/codemirror/codemirror.min.js"><\/script>');</script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/python/python.min.js"></script>
+  <script>(window.CodeMirror && CodeMirror.modes.python) || document.write('<script src="vendor/codemirror/python.min.js"><\/script>');</script>
+
+  <script src="data/missions.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/hints.js"></script>
+  <script src="js/errors.js"></script>
+  <script src="js/checker.js"></script>
+  <script src="js/runner.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

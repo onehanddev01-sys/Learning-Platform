@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แผนที่บทเรียน — Python เริ่มจากศูนย์</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="map-page">
+
+  <header class="topbar">
+    <a class="topbar-back" href="index.html">หน้าแรก</a>
+    <div class="topbar-title">แผนที่บทเรียน</div>
+    <div class="topbar-spacer"></div>
+  </header>
+
+  <main class="map-layout">
+    <div id="map-notice" class="map-notice hidden"></div>
+
+    <div class="map-progress">
+      <span class="map-progress-label">ความก้าวหน้าของคุณ</span>
+      <div id="progress-dots" class="progress-dots"></div>
+      <button id="reset-btn" class="reset-btn" type="button">ลบความคืบหน้า</button>
+    </div>
+
+    <div id="map-root"></div>
+  </main>
+
+  <!-- หน้าต่างยืนยันการลบความคืบหน้า (2 ชั้น) -->
+  <div id="confirm-overlay" class="win-overlay hidden">
+    <div class="confirm-card">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-text"></p>
+      <div id="confirm-actions" class="confirm-actions"></div>
+    </div>
+  </div>
+
+  <script src="data/missions.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>

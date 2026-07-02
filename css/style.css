@@ -1,0 +1,838 @@
+/*
+ * style.css — สไตล์ทั้งเว็บ
+ * ธีม: ภารกิจอวกาศแบบสะอาดตา อ่านง่าย ไม่รกด้วยของตกแต่ง
+ * กติกาสี: Error/ยังไม่ผ่าน = โทนส้ม | ผ่าน/สำเร็จ = โทนเขียว
+ * (สีแดงใช้ได้ที่เดียวคือไฮไลต์บรรทัด error ใน editor แบบแดงอ่อน)
+ */
+
+/* ---------- ตัวแปรกลางและพื้นฐาน ---------- */
+
+:root {
+  --ink: #22293f;
+  --ink-soft: #5a6275;
+  --bg: #eef1f9;
+  --card: #ffffff;
+  --line: #dde3f0;
+
+  --navy: #141b3d;
+  --navy-2: #1d2757;
+  --navy-text: #e8ecfb;
+
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --primary-soft: #eef0ff;
+
+  --green: #1e8e3e;
+  --green-bg: #e6f4ea;
+  --green-border: #b7dfc3;
+
+  --orange: #b45309;
+  --orange-strong: #e8710a;
+  --orange-bg: #fff4e5;
+  --orange-border: #f5c592;
+
+  --amber: #b45309;
+  --amber-bg: #fef3c7;
+
+  --console-bg: #10152e;
+  --console-text: #d7e0ff;
+
+  --font-ui: 'Sarabun', 'Leelawadee UI', 'Noto Sans Thai', Tahoma, sans-serif;
+  --font-code: Consolas, Monaco, 'Courier New', monospace;
+
+  --radius: 12px;
+  --shadow: 0 4px 16px rgba(20, 27, 61, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--bg);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.hidden { display: none !important; }
+
+code {
+  font-family: var(--font-code);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.92em;
+}
+
+/* แบนเนอร์เตือนเมื่อ localStorage ใช้ไม่ได้ */
+.storage-banner {
+  background: var(--orange-bg);
+  color: var(--orange);
+  border-bottom: 1px solid var(--orange-border);
+  padding: 10px 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ---------- ปุ่ม ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.06s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+
+.btn-secondary {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  border: 1px solid #c9cdf5;
+}
+.btn-secondary:hover { background: #e2e5ff; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover { background: #f3f5fc; }
+
+/* ปุ่ม Run — ใหญ่ เห็นชัด สีเขียวชวนกด */
+.btn-run {
+  background: var(--green);
+  color: #fff;
+  font-size: 16px;
+  padding: 11px 26px;
+}
+.btn-run:hover { background: #187433; }
+
+.btn-hint {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid #f0d48a;
+}
+.btn-hint:hover { background: #fde9ae; }
+
+.btn-small { font-size: 14px; padding: 7px 14px; }
+
+.btn-big { font-size: 19px; padding: 15px 36px; border-radius: 14px; }
+
+/* ---------- แถบหัวเว็บ ---------- */
+
+.topbar {
+  background: linear-gradient(90deg, var(--navy), var(--navy-2));
+  color: var(--navy-text);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+}
+.topbar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #aeb9e8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.topbar-back:hover { color: #fff; }
+.topbar-title { font-weight: 700; font-size: 16px; }
+.topbar-spacer { flex: 1; }
+.module-chip {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #cdd6f7;
+  font-size: 12.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ---------- หน้า Welcome ---------- */
+
+.welcome-page { background: var(--navy); }
+
+.welcome-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 600px at 70% -10%, #2b3a7e 0%, transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, #23306b 0%, transparent 55%),
+    var(--navy);
+}
+
+/* ดาวเล็ก ๆ ด้วย CSS ล้วน ไม่ใช้รูปภาพ */
+.hero-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 22%, #ffffffcc 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 28% 68%, #ffffff99 50%, transparent 51%),
+    radial-gradient(1.8px 1.8px at 46% 14%, #ffffffbb 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 63% 51%, #ffffff88 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 78% 26%, #ffffffcc 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 88% 74%, #ffffff99 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 35% 88%, #ffffffaa 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 95% 42%, #ffffffaa 50%, transparent 51%);
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  color: var(--navy-text);
+  padding: 48px 24px;
+  max-width: 720px;
+}
+.hero-rocket { color: #8ea2ff; margin-bottom: 8px; }
+.hero-content h1 {
+  font-size: 44px;
+  margin: 0 0 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.hero-sub {
+  font-size: 18px;
+  color: #b9c3ea;
+  margin: 0 0 32px;
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-actions .btn-ghost { color: #c3cdf5; border-color: #3c4a8f; }
+.hero-actions .btn-ghost:hover { background: rgba(255, 255, 255, 0.07); }
+.hero-note { margin-top: 22px; font-size: 13.5px; color: #7f8bc0; }
+
+/* ---------- หน้า Mission Map ---------- */
+
+.map-page { background: var(--bg); }
+
+.map-layout {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.map-notice {
+  background: var(--orange-bg);
+  border: 1px solid var(--orange-border);
+  color: var(--orange);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.map-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+}
+.map-progress-label { font-size: 14px; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+
+/* จุดความก้าวหน้า — ตั้งใจไม่แสดงตัวเลขรวม */
+.progress-dots { display: flex; flex-wrap: wrap; gap: 7px; }
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #d5dcee;
+  border: 1px solid #c2cbe4;
+}
+.dot-done { background: var(--green); border-color: var(--green); }
+
+.course-complete {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin-bottom: 22px;
+  font-weight: 700;
+}
+
+/* โซนของแต่ละ Module */
+.zone {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 26px;
+  margin-bottom: 26px;
+}
+.zone-capstone {
+  background: linear-gradient(135deg, #171f47, #232c63);
+  border-color: #37417e;
+}
+.zone-capstone .zone-head h2, .zone-capstone .zone-head p { color: var(--navy-text); }
+
+.zone-head h2 { margin: 0 0 2px; font-size: 19px; }
+.zone-head p { margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px; }
+
+/* เส้นทางเดินในโซน: เส้นแนวตั้งเชื่อมทุก node */
+.zone-path { position: relative; padding-left: 8px; }
+.zone-path::before {
+  content: '';
+  position: absolute;
+  left: 29px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--line);
+}
+.zone-capstone .zone-path::before { background: #3a447f; }
+
+/* node ของแต่ละด่าน */
+.map-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 4px;
+}
+a.map-node:hover { background: #f4f6fd; }
+.zone-capstone a.map-node:hover { background: rgba(255, 255, 255, 0.06); }
+
+.node-icon {
+  position: relative;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+}
+
+.node-body { display: flex; flex-direction: column; line-height: 1.45; }
+.node-title { font-weight: 700; font-size: 15.5px; }
+.node-state { font-size: 12.5px; color: var(--ink-soft); }
+.zone-capstone .node-title { color: var(--navy-text); }
+.zone-capstone .node-state { color: #9aa6d9; }
+
+.node-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  border-radius: 999px;
+  padding: 1px 10px;
+  width: fit-content;
+  margin-bottom: 2px;
+}
+.node-capstone .node-badge { background: #ffd166; color: #6b4a00; }
+
+/* สถานะ: ผ่านแล้ว */
+.node-done .node-icon { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+
+/* สถานะ: พร้อมเรียน (ด่านปัจจุบัน) — เด่นและมี pulse เบา ๆ */
+.node-ready .node-icon {
+  background: var(--primary);
+  color: #fff;
+  animation: pulse 2s infinite;
+}
+.node-ready .node-title { color: var(--primary-dark); }
+.zone-capstone .node-ready .node-title { color: #ffd166; }
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(79, 70, 229, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+}
+
+/* สถานะ: ล็อก — สีจาง คลิกไม่ได้ */
+.node-locked { opacity: 0.55; cursor: not-allowed; }
+.node-locked .node-icon { background: #e7ebf5; color: #9aa3ba; border-color: var(--line); }
+
+/* Mini Project และ Capstone หน้าตาต่างจากด่านปกติ */
+.node-mini { border: 1px dashed #c9cdf5; background: #fbfbff; }
+.node-capstone { padding: 16px 12px; }
+.node-capstone .node-icon { width: 54px; height: 54px; }
+.node-capstone .node-title { font-size: 17px; }
+
+/* ปุ่มลบความคืบหน้า บนการ์ดความก้าวหน้า */
+.reset-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--orange-border);
+  color: var(--orange);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.reset-btn:hover { background: var(--orange-bg); }
+
+/* ปุ่มยืนยันการลบ (โทนส้มตามภาษาสีของระบบ) */
+.btn-danger {
+  background: var(--orange-strong);
+  color: #fff;
+}
+.btn-danger:hover { background: #c85f06; }
+
+/* การ์ดยืนยันการลบความคืบหน้า */
+.confirm-card {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  padding: 30px 28px 26px;
+  animation: win-pop 0.25s ease-out;
+}
+.confirm-card h2 { margin: 0 0 10px; font-size: 21px; color: var(--orange-strong); }
+.confirm-card p { margin: 0 0 22px; font-size: 15.5px; }
+.confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- หน้า Mission ---------- */
+
+.mission-page { background: var(--bg); }
+
+.mission-layout {
+  display: grid;
+  grid-template-columns: minmax(400px, 11fr) minmax(430px, 13fr);
+  gap: 22px;
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 22px 22px 110px; /* กันพื้นที่ให้ Task Bar ล่าง */
+  align-items: start;
+}
+
+/* คอลัมน์ซ้าย: เนื้อหา */
+.lesson-col {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26px 30px;
+}
+
+.mission-title { font-size: 26px; margin: 0 0 6px; line-height: 1.4; }
+
+.concept-chip {
+  display: inline-block;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 14px;
+  margin-bottom: 16px;
+}
+
+.done-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14.5px;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+}
+
+.hook-box {
+  background: linear-gradient(135deg, #182050, #232c63);
+  color: #dfe5fb;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-size: 16px;
+  margin-bottom: 22px;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.show-section { margin-bottom: 22px; }
+.show-code {
+  background: var(--console-bg);
+  color: var(--console-text);
+  font-family: var(--font-code);
+  font-size: 14.5px;
+  line-height: 1.6;
+  border-radius: 10px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  margin: 0 0 10px;
+}
+/* โค้ดใน pre ไม่ต้องใช้พื้นหลังแบบ inline code */
+.show-code code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.explain-section { margin-bottom: 22px; }
+.explain-section p { margin: 0 0 12px; }
+.explain-section ul { margin: 0 0 12px; padding-left: 22px; }
+.explain-section li { margin-bottom: 6px; }
+
+.ideas-section {
+  background: #f8f9ff;
+  border: 1px dashed #c9cdf5;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 22px;
+}
+.ideas-list { margin: 0; padding-left: 20px; }
+.ideas-list li { margin-bottom: 8px; }
+
+.task-section {
+  background: var(--amber-bg);
+  border-left: 5px solid #f59e0b;
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+.task-section .task-label { color: #92610a; }
+.task-section p { margin: 0; font-weight: 600; }
+
+/* คอลัมน์ขวา: Editor + Output */
+.work-col { display: flex; flex-direction: column; gap: 16px; }
+
+.editor-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.editor-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.editor-title { font-weight: 700; font-size: 15px; }
+.editor-shortcut { font-size: 12.5px; color: var(--ink-soft); flex: 1; }
+
+.CodeMirror {
+  height: 330px;
+  font-family: var(--font-code);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ไฮไลต์บรรทัดที่ error — แดงอ่อน (จุดเดียวที่อนุญาตให้ใช้โทนแดง) */
+.line-error { background: #ffe3e0 !important; }
+
+/* textarea สำรองเมื่อ CodeMirror โหลดไม่ขึ้น */
+.plain-editor {
+  width: 100%;
+  min-height: 330px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: var(--font-code);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 12px 16px;
+}
+
+.output-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.output-head {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* Output Panel สไตล์คอนโซล */
+.output-panel {
+  background: var(--console-bg);
+  color: var(--console-text);
+  min-height: 170px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 14px 18px;
+  font-family: var(--font-code);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.out-text { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: inherit; }
+
+/* กล่องข้อความ "ยังไม่ผ่าน" — โทนส้ม เป็นมิตร ห้ามแดง */
+.fail-box {
+  background: var(--orange-bg);
+  border: 1px solid var(--orange-border);
+  border-left: 5px solid var(--orange-strong);
+  color: #6b3d05;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-family: var(--font-ui);
+  font-size: 15px;
+}
+.fail-title { font-weight: 700; color: var(--orange-strong); margin-bottom: 4px; }
+.fail-what { margin-bottom: 4px; }
+.fail-where { font-weight: 600; margin-bottom: 4px; }
+.fail-how { margin-bottom: 4px; }
+.raw-error summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: #a3722f;
+  margin-top: 6px;
+}
+.raw-error pre {
+  background: #fde8cd;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* กล่องแจ้ง "ยังผ่านอยู่" ตอนรันผ่านซ้ำในโหมดทบทวน — โทนเขียว ไม่เด้ง overlay */
+.pass-box {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-left: 5px solid var(--green);
+  color: #14532d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+/* กล่องข้อความแจ้งทั่วไปใน output */
+.info-box {
+  background: rgba(142, 162, 255, 0.14);
+  border: 1px solid rgba(142, 162, 255, 0.35);
+  color: #b9c6ff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+/* ช่องกรอก input() ในคอนโซล */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.input-prompt { color: #ffd166; font-family: var(--font-ui); font-weight: 600; }
+.input-field {
+  flex: 1;
+  min-width: 140px;
+  background: #0b0f24;
+  border: 1px solid #39406b;
+  color: var(--console-text);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: var(--font-code);
+  font-size: 14.5px;
+  outline: none;
+}
+.input-field:focus { border-color: var(--primary); }
+.input-row .btn-small { background: var(--primary); color: #fff; }
+.link-stop {
+  background: none;
+  border: none;
+  color: #8891bb;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-stop:hover { color: var(--orange-strong); }
+
+/* ---------- แผงคำใบ้ ---------- */
+
+.hint-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 78px;
+  width: 380px;
+  max-width: calc(100vw - 36px);
+  max-height: 55vh;
+  overflow-y: auto;
+  background: var(--card);
+  border: 1px solid #f0d48a;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(20, 27, 61, 0.22);
+  padding: 16px 18px;
+  z-index: 40;
+}
+.hint-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+.hint-close {
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.hint-note {
+  background: var(--amber-bg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+.hint-item { margin-bottom: 10px; }
+.hint-item p { margin: 2px 0 0; }
+.hint-level {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+  background: var(--amber-bg);
+  border-radius: 999px;
+  padding: 1px 10px;
+}
+.hint-empty { color: var(--ink-soft); font-size: 14px; }
+
+/* ---------- Task Bar ติดขอบล่าง ---------- */
+
+.taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 14px rgba(20, 27, 61, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 22px;
+  z-index: 30;
+}
+.taskbar-label {
+  background: #f59e0b;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 14px;
+  white-space: nowrap;
+}
+.taskbar-text {
+  flex: 1;
+  font-size: 14.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- หน้าต่างความสำเร็จ ---------- */
+
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 18, 43, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 20px;
+}
+.win-card {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  padding: 34px 32px 28px;
+  animation: win-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+@keyframes win-pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.win-star { color: #f59e0b; }
+.win-card h2 { margin: 8px 0 10px; font-size: 24px; color: var(--green); }
+.win-card p { margin: 0 0 22px; font-size: 16px; }
+.win-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- จอแคบ / แท็บเล็ต ---------- */
+
+@media (max-width: 1020px) {
+  .mission-layout { grid-template-columns: 1fr; }
+  .hero-content h1 { font-size: 34px; }
+  .taskbar-text { white-space: normal; font-size: 13.5px; }
+  .module-chip { display: none; }
+}
