@@ -34,8 +34,13 @@
 
   /*
    * บันทึกว่าเกิดความไม่ผ่าน 1 ครั้ง (Error หรือตรวจไม่ผ่าน)
-   * ถ้าเป็นชนิดเดิมซ้ำติดกันครบ hintTriggerRepeats ของด่าน → เปิด Hint ระดับถัดไปให้เอง
-   * errType: ชนิด Error เช่น 'NameError' (การตรวจไม่ผ่านใช้ 'CheckFail')
+   * เปิด Hint ระดับถัดไปให้อัตโนมัติเมื่อเข้าเงื่อนไขข้อใดข้อหนึ่ง:
+   *   1. ไม่ผ่าน "ชนิดเดิม" ซ้ำติดกันครบ hintTriggerRepeats ของด่าน (กติกาหลักตามเอกสาร)
+   *   2. ไม่ผ่านติดต่อกันรวมทุกชนิดครบ hintTriggerRepeats + 2 (ตาข่ายนิรภัย —
+   *      กันกรณีผู้เรียนพลาดสลับชนิดไปมาเรื่อย ๆ แล้วตัวนับข้อ 1 ถูกรีเซ็ตตลอด
+   *      จนไม่มีคำใบ้มาช่วยเลยทั้งที่ติดหนักมาก)
+   * errType: ชนิด Error เช่น 'NameError' (การตรวจไม่ผ่านใช้ 'CheckFail',
+   *          โค้ดเป็นคอมเมนต์ล้วนใช้ 'CommentOnly')
    * คืนค่า {autoRevealed, level}
    */
   function recordFailure(mission, errType) {
@@ -46,18 +51,23 @@
     if (tracking.lastType === errType) {
       tracking.streak += 1;
     } else {
-      // Error คนละชนิด = เริ่มนับใหม่
+      // Error คนละชนิด = เริ่มนับชนิดเดิมใหม่ (แต่ตัวนับรวมยังเดินต่อ)
       tracking.lastType = errType;
       tracking.streak = 1;
     }
+    tracking.anyStreak = (tracking.anyStreak || 0) + 1; // นับความไม่ผ่านติดกันทุกชนิดรวมกัน
 
     var autoRevealed = false;
     var level = getLevel(id);
 
-    if (tracking.streak >= trigger && level < MAX_LEVEL) {
+    var sameTypeHit = tracking.streak >= trigger;
+    var mixedHit = tracking.anyStreak >= trigger + 2;
+
+    if ((sameTypeHit || mixedHit) && level < MAX_LEVEL) {
       level += 1;
       global.Progress.setHintLevel(id, level);
-      tracking.streak = 0; // นับใหม่ จะได้ไม่เปิดรัว ๆ ทุกครั้งที่พลาด
+      tracking.streak = 0;    // นับใหม่ทั้งคู่ จะได้ไม่เปิดรัว ๆ ทุกครั้งที่พลาด
+      tracking.anyStreak = 0;
       autoRevealed = true;
     }
 

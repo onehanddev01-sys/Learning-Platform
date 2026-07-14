@@ -13,6 +13,27 @@
   }
 
   /*
+   * ปรับตัวอักษรไทยที่ "มองด้วยตาเหมือนกันเป๊ะ แต่เป็นคนละรหัส (code point)"
+   * ให้กลายเป็นรูปแบบมาตรฐานเดียวก่อนนำไปเทียบ
+   * เพื่อไม่ให้ระบบเข้มงวดเกินจนผู้เรียนที่พิมพ์ถูกความหมายกลับไม่ผ่าน
+   *
+   * กรณีที่พบบ่อยที่สุด (และเป็นสาเหตุที่ผู้เรียนพิมพ์ "ถูก" แต่ระบบตรวจไม่ผ่าน):
+   *   - "แ" (U+0E41)  กับ  "เเ" = เ+เ (U+0E40 สองตัว)      → มองเหมือนกันทุกพิกเซล
+   *   - "ำ" (U+0E33)  กับ  "ํา" = นฤคหิต U+0E4D + สระอา U+0E32
+   * รวมทั้งเรียงลำดับสระ/วรรณยุกต์ให้เป็นมาตรฐานด้วย NFC
+   *
+   * หมายเหตุ: จงใจไม่รวมกรณีที่เป็น "คนละคำจริง ๆ" เช่น ไม้ม้วน (ใ) กับ ไม้มลาย (ไ)
+   * เพราะสองตัวนี้ออกเสียงและความหมายต่างกัน ถือเป็นการสะกดผิด ไม่ใช่ตัวซ้อน
+   */
+  function normalizeThai(s) {
+    var str = String(s == null ? '' : s);
+    try { str = str.normalize('NFC'); } catch (e) { /* เบราว์เซอร์เก่ามาก ข้ามไป */ }
+    return str
+      .replace(/เเ/g, 'แ')   // เ + เ   →  แ
+      .replace(/ํา/g, 'ำ');  // ◌ํ + า  →  ำ
+  }
+
+  /*
    * ตัดคอมเมนต์ (#...) ออกจากโค้ด แต่ไม่ตัด # ที่อยู่ในข้อความ
    * ใช้ก่อนตรวจกติกาแบบ codeIncludes/codeMatches
    * เพื่อไม่ให้คำในคอมเมนต์ของ starterCode ทำให้ผ่านการตรวจแบบผิด ๆ
@@ -63,26 +84,28 @@
         return normalize(env.code) !== '' &&
                normalize(env.code) !== normalize(env.starterCode);
 
+      // ทุก rule ที่เทียบข้อความ จะปรับตัวอักษรไทยทั้งสองฝั่งให้เป็นมาตรฐานก่อน
+      // ผู้เรียนพิมพ์ "เเ" (เ สองตัว) หรือ "แ" ก็ถือว่าตรงกัน
       case 'outputContains':
-        return env.output.indexOf(rule.value) !== -1;
+        return normalizeThai(env.output).indexOf(normalizeThai(rule.value)) !== -1;
 
       case 'outputEquals':
-        return env.output.trim() === String(rule.value);
+        return normalizeThai(env.output.trim()) === normalizeThai(String(rule.value));
 
       case 'outputMatches':
-        return new RegExp(rule.pattern, 'm').test(env.output);
+        return new RegExp(normalizeThai(rule.pattern), 'm').test(normalizeThai(env.output));
 
       case 'outputLineCountAtLeast':
         return countLines(env.output) >= rule.value;
 
       case 'codeIncludes':
-        return env.codeClean.indexOf(rule.value) !== -1;
+        return normalizeThai(env.codeClean).indexOf(normalizeThai(rule.value)) !== -1;
 
       case 'codeNotIncludes':
-        return env.codeClean.indexOf(rule.value) === -1;
+        return normalizeThai(env.codeClean).indexOf(normalizeThai(rule.value)) === -1;
 
       case 'codeMatches':
-        return new RegExp(rule.pattern, 'm').test(env.codeClean);
+        return new RegExp(normalizeThai(rule.pattern), 'm').test(normalizeThai(env.codeClean));
 
       default:
         // กติกาที่ไม่รู้จัก ให้ถือว่าไม่ผ่าน จะได้เห็นตอนทดสอบ ไม่หลุดไปเงียบ ๆ
@@ -131,6 +154,7 @@
   global.Checker = {
     check: check,
     normalize: normalize,
+    normalizeThai: normalizeThai,
     stripComments: stripComments,
     countLines: countLines
   };

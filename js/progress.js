@@ -17,7 +17,7 @@
     return {
       version: 1,
       completed: [],          // id ด่านที่ผ่านแล้ว
-      currentMissionId: 'm1', // ด่านล่าสุดที่เข้า
+      currentMissionId: 'm0', // ด่านล่าสุดที่เข้า (m0 = ด่านปฐมนิเทศ)
       capstoneDone: false,
       savedCode: {},          // โค้ดล่าสุดของแต่ละด่าน
       hintState: {},          // ระดับ Hint ที่เปิดแล้วของแต่ละด่าน (0-3)
@@ -62,21 +62,45 @@
     }
   }
 
-  // บันทึกสถานะ
-  function save(state) {
+  // รายชื่อ listener ที่รอฟังเมื่อสถานะเปลี่ยน (ใช้โดย sync.js เพื่อดันขึ้น cloud)
+  var changeListeners = [];
+  function notifyChange(state) {
+    for (var i = 0; i < changeListeners.length; i++) {
+      try { changeListeners[i](state); } catch (e) { /* listener พังต้องไม่ทำให้ระบบพัง */ }
+    }
+  }
+
+  // บันทึกสถานะ (silent = true : ไม่แจ้ง listener — ใช้ตอน sync เขียนกลับ กันลูป)
+  function save(state, silent) {
     state.updatedAt = new Date().toISOString();
     if (!storageOk) {
       memoryState = state;
-      return;
+    } else {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(state));
+      } catch (e) {
+        // พื้นที่เต็มกลางทาง → สลับไปโหมดหน่วยความจำ ไม่ให้ crash
+        storageOk = false;
+        memoryState = state;
+        showStorageBanner();
+      }
     }
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-    } catch (e) {
-      // พื้นที่เต็มกลางทาง → สลับไปโหมดหน่วยความจำ ไม่ให้ crash
-      storageOk = false;
-      memoryState = state;
-      showStorageBanner();
-    }
+    if (!silent) notifyChange(state);
+  }
+
+  // ลงทะเบียนฟังการเปลี่ยนแปลงของสถานะ (sync.js ใช้ดันข้อมูลขึ้น cloud)
+  function onChange(cb) { if (typeof cb === 'function') changeListeners.push(cb); }
+
+  // เขียนสถานะที่ผสานจาก cloud กลับลง local (เขียนแบบ silent กันลูปการซิงก์)
+  function importState(partial) {
+    var s = load();
+    if (partial && Array.isArray(partial.completed)) s.completed = partial.completed;
+    if (partial && partial.currentMissionId) s.currentMissionId = partial.currentMissionId;
+    if (partial && typeof partial.capstoneDone === 'boolean') s.capstoneDone = partial.capstoneDone;
+    if (partial && partial.savedCode) s.savedCode = partial.savedCode;
+    if (partial && partial.hintState) s.hintState = partial.hintState;
+    save(s, true);
+    return s;
   }
 
   // แก้ไขสถานะผ่านฟังก์ชัน แล้วบันทึกให้อัตโนมัติ
@@ -208,6 +232,8 @@
     getErrorTracking: getErrorTracking,
     setErrorTracking: setErrorTracking,
     clearErrorTracking: clearErrorTracking,
+    onChange: onChange,
+    importState: importState,
     resetAll: resetAll,
     initBanner: initBanner,
     storageAvailable: function () { return storageOk; }

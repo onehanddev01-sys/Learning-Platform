@@ -170,6 +170,19 @@ code {
   white-space: nowrap;
 }
 
+/* ปุ่มเปิด/ปิดเสียงประกอบ บน topbar */
+.sound-btn {
+  background: transparent;
+  border: none;
+  color: #aeb9e8;
+  cursor: pointer;
+  padding: 5px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+}
+.sound-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+
 /* ---------- หน้า Welcome ---------- */
 
 .welcome-page { background: var(--navy); }
@@ -465,6 +478,30 @@ a.map-node:hover { background: #f4f6fd; }
   padding: 3px 14px;
   margin-bottom: 16px;
 }
+
+/* แถวคำศัพท์ภาษาอังกฤษพร้อมคำแปล — ช่วยผู้เรียนที่ยังไม่คุ้นภาษาอังกฤษ */
+.vocab-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.vocab-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.vocab-chip {
+  background: #f6f8ff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.vocab-chip code { font-size: 12.5px; }
 
 .done-banner {
   display: flex;
@@ -830,8 +867,135 @@ a.map-node:hover { background: #f4f6fd; }
 /* ---------- จอแคบ / แท็บเล็ต ---------- */
 
 @media (max-width: 1020px) {
-  .mission-layout { grid-template-columns: 1fr; }
+  .mission-layout { grid-template-columns: 1fr; padding-bottom: 190px; } /* Task Bar จอแคบสูงขึ้นเพราะข้อความ wrap — กันบังเนื้อหาท้ายหน้า */
   .hero-content h1 { font-size: 34px; }
   .taskbar-text { white-space: normal; font-size: 13.5px; }
   .module-chip { display: none; }
+  .sound-btn { margin-left: auto; } /* module-chip ที่เคยดันขวาถูกซ่อน ให้ปุ่มเสียงดันตัวเองแทน */
+}
+
+/* ---------- ปุ่มบัญชี/เข้าสู่ระบบ บน topbar + หน้าต่างเข้าสู่ระบบ ---------- */
+
+.account-slot { position: relative; display: inline-flex; align-items: center; }
+
+.account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #e8ecfb;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.account-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.account-btn .account-ic { flex: none; opacity: 0.9; }
+.account-btn-label { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ปุ่มบนหน้า Welcome — ตรึงไว้มุมขวาบนของจอ */
+.account-slot-hero { position: fixed; top: 18px; right: 22px; z-index: 50; }
+
+/* เมนูบัญชีที่เลื่อนลงมาใต้ปุ่ม */
+.account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 8px;
+  min-width: 190px;
+  z-index: 70;
+}
+.account-menu-info {
+  font-size: 12.5px;
+  color: var(--green);
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+.account-signout {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.account-signout:hover { background: var(--orange-bg); color: var(--orange); }
+
+/* การ์ดหน้าต่างเข้าสู่ระบบ (ใช้ .win-overlay เป็นฉากหลัง) */
+.auth-card {
+  position: relative;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 28px 26px;
+  text-align: left;
+  animation: win-pop 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.auth-x {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.auth-x:hover { color: var(--ink); }
+.auth-title { margin: 0 0 6px; font-size: 20px; color: var(--ink); }
+.auth-sub { margin: 0 0 14px; font-size: 14px; color: var(--ink-soft); }
+.auth-modes { display: flex; flex-direction: column; gap: 9px; margin: 0 0 20px; }
+.auth-mode { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.auth-mode-tag {
+  display: inline-block; font-weight: 700; font-size: 12px;
+  padding: 2px 9px; border-radius: 6px; margin-inline-end: 5px;
+}
+.auth-mode-in { background: var(--primary-soft); color: var(--primary-dark); }
+.auth-mode-guest { background: #eef1f9; color: var(--ink-soft); }
+.auth-google { width: 100%; justify-content: center; }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.auth-input:focus { outline: none; border-color: var(--primary); }
+.auth-err { color: var(--orange); font-size: 13.5px; min-height: 18px; margin-bottom: 8px; }
+.auth-submit { width: 100%; justify-content: center; }
+.auth-toggle { margin-top: 16px; text-align: center; font-size: 14px; color: var(--ink-soft); }
+.linklike {
+  background: none; border: none; padding: 0;
+  color: var(--primary); font-family: var(--font-ui); font-size: 14px;
+  font-weight: 600; cursor: pointer; text-decoration: underline;
 }

@@ -14,6 +14,7 @@
     <a class="topbar-back" href="index.html">หน้าแรก</a>
     <div class="topbar-title">แผนที่บทเรียน</div>
     <div class="topbar-spacer"></div>
+    <div id="account-slot" class="account-slot"></div>
   </header>
 
   <main class="map-layout">
@@ -37,8 +38,16 @@
     </div>
   </div>
 
+  <!-- Firebase (compat) — ระบบบัญชีและการซิงก์ข้ามอุปกรณ์ (ไม่บังคับ; ออฟไลน์ก็ใช้เว็บได้) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
   <script src="data/missions.js"></script>
   <script src="js/progress.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/map.js"></script>
 </body>
 </html>

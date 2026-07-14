@@ -10,6 +10,8 @@
 </head>
 <body class="welcome-page">
 
+  <div id="account-slot" class="account-slot account-slot-hero"></div>
+
   <main class="welcome-hero">
     <div class="hero-stars" aria-hidden="true"></div>
     <div class="hero-content">
@@ -17,15 +19,23 @@
       <p class="hero-sub">ภารกิจฝึกเขียนโปรแกรมสำหรับคนที่ไม่เคยเขียนโค้ดมาก่อน<br>
       รันได้ทันทีในเบราว์เซอร์ ผิดได้ไม่มีหักคะแนน แล้วจบด้วยโปรเจกต์ของคุณเอง</p>
       <div class="hero-actions">
-        <a id="start-btn" class="btn btn-primary btn-big" href="mission.html?id=m1">เริ่มต้นเรียนรู้</a>
+        <a id="start-btn" class="btn btn-primary btn-big" href="mission.html?id=m0">เริ่มต้นเรียนรู้</a>
         <a class="btn btn-ghost" href="map.html">ดูแผนที่บทเรียน</a>
       </div>
       <p class="hero-note">ไม่ต้องสมัครสมาชิก ไม่ต้องติดตั้งโปรแกรมใด ๆ</p>
     </div>
   </main>
 
+  <!-- Firebase (compat) — ระบบบัญชีและการซิงก์ข้ามอุปกรณ์ (ไม่บังคับ; ออฟไลน์ก็ใช้เว็บได้) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
   <script src="data/missions.js"></script>
   <script src="js/progress.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     // ปรับปุ่มหลักตามความก้าวหน้า: เคยเรียนแล้ว → พาไปด่านล่าสุดที่ค้าง
     (function () {

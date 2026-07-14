@@ -14,6 +14,20 @@
   // ใช้บอกว่าผู้เรียนกดยกเลิกการรันเอง (ตอนโปรแกรมรอ input)
   var INTERRUPT_FLAG = '__PYLEARN_INTERRUPT__';
 
+  /*
+   * ทำความสะอาดโค้ดก่อนรัน — สำหรับผู้เรียนที่เพิ่งหัดใช้คอมพิวเตอร์
+   * ปัญหาที่พบจริง: แป้นพิมพ์ไทยหรือการคัดลอกจากเอกสาร ทำให้ได้
+   * เครื่องหมายคำพูดแบบโค้ง (' ' " ") ที่หน้าตาเหมือนของจริงแต่ Python ไม่รู้จัก
+   * รวมถึงช่องว่างพิเศษที่มองไม่เห็น — แก้ให้เงียบ ๆ ผู้เรียนไม่ต้องรู้ด้วยซ้ำว่าเคยพลาด
+   */
+  function sanitizeCode(code) {
+    return String(code == null ? '' : code)
+      .replace(/[‘’]/g, "'")  // อัญประกาศเดี่ยวแบบโค้ง (U+2018/2019) → '
+      .replace(/[“”]/g, '"')  // อัญประกาศคู่แบบโค้ง (U+201C/201D) → "
+      .replace(/ /g, ' ')           // ช่องว่างพิเศษ (non-breaking space) → ช่องว่างปกติ
+      .replace(/[​﻿]/g, '');  // อักขระล่องหน (zero-width space, BOM) → ลบทิ้ง
+  }
+
   // ให้ Skulpt อ่านไฟล์ stdlib ได้ (จำเป็นเวลา import โมดูลมาตรฐาน)
   function builtinRead(file) {
     if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][file] === undefined) {
@@ -31,6 +45,7 @@
    */
   function run(code, opts) {
     opts = opts || {};
+    code = sanitizeCode(code); // กันเครื่องหมายคำพูดโค้ง/อักขระล่องหนหลุดเข้า Python
     var output = '';
     var lineCount = 0;
     var truncated = false;
@@ -138,6 +153,7 @@
   global.Runner = {
     run: run,
     runForTest: runForTest,
+    sanitize: sanitizeCode,
     OUTPUT_MAX_LINES: OUTPUT_MAX_LINES,
     EXEC_LIMIT_MS: EXEC_LIMIT_MS,
     INTERRUPT_FLAG: INTERRUPT_FLAG

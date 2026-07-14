@@ -49,6 +49,32 @@
     return null;
   }
 
+  /*
+   * เช็คว่ามีตัวอักษรไทยอยู่ "นอกเครื่องหมายคำพูด" หรือไม่
+   * เกิดจาก 2 สาเหตุที่พบบ่อยในผู้เรียนที่เพิ่งใช้คอมพิวเตอร์:
+   *   1. เผลอพิมพ์คำสั่งตอนแป้นพิมพ์ยังเป็นภาษาไทยอยู่
+   *   2. อยากแสดงข้อความไทยแต่ลืมครอบด้วยเครื่องหมายคำพูด
+   */
+  function thaiOutsideStrings(code) {
+    var s = String(code || '');
+    var out = '';
+    var inStr = null;
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (inStr) {
+        if (ch === '\\') { i++; continue; }
+        if (ch === inStr) inStr = null;
+      } else if (ch === '"' || ch === "'") {
+        inStr = ch;
+      } else if (ch === '#') {
+        while (i < s.length && s[i] !== '\n') i++;
+      } else {
+        out += ch;
+      }
+    }
+    return /[฀-๿]/.test(out);
+  }
+
   // เช็คว่าบรรทัดก่อนหน้าจบด้วย : แต่บรรทัดนี้ไม่ได้ย่อหน้าลึกกว่า (ลืมย่อหน้า)
   function missingIndentAfterColon(code, lineNo) {
     if (!lineNo || lineNo < 2) return false;
@@ -108,6 +134,80 @@
     return m ? m[1] : null;
   }
 
+  // ---------- ตัวช่วยเดาคำที่ผู้เรียนตั้งใจจะพิมพ์ (สำหรับคำสะกดผิด) ----------
+
+  /*
+   * ระยะการสะกด — ใช้แบบรองรับการสลับตัวอักษรติดกัน (Damerau/OSA)
+   * เพราะการพิมพ์ผิดยอดฮิตของมือใหม่คือสลับตัวติดกัน: pritn, esle, whlie, fro
+   * ซึ่งควรนับเป็นระยะ 1 (Levenshtein ธรรมดาจะนับเป็น 2 แล้วเดาไม่เจอ)
+   */
+  function editDistance(a, b) {
+    var m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    var d = [];
+    for (var i = 0; i <= m; i++) { d[i] = [i]; }
+    for (var j = 0; j <= n; j++) { d[0][j] = j; }
+    for (i = 1; i <= m; i++) {
+      for (j = 1; j <= n; j++) {
+        var cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+        // ตัวอักษรติดกันสลับตำแหน่ง = ระยะ 1
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+          d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+        }
+      }
+    }
+    return d[m][n];
+  }
+
+  // คำสั่งพื้นฐานที่หลักสูตรใช้ + คีย์เวิร์ดหัวบล็อก
+  var KNOWN_BUILTINS = ['print', 'input', 'int', 'float', 'str', 'len', 'range', 'list'];
+  var KEYWORDS = ['if', 'elif', 'else', 'for', 'while', 'def', 'return'];
+
+  // method ที่แต่ละชนิดข้อมูลมีจริง — ใช้เดาว่าผู้เรียนสะกดผิดหรือใช้ผิดชนิด
+  var TYPE_METHODS = {
+    list: ['append', 'insert', 'remove', 'pop', 'sort', 'reverse', 'count', 'index', 'clear', 'extend'],
+    str: ['upper', 'lower', 'strip', 'split', 'replace', 'find', 'format', 'count', 'startswith', 'endswith', 'join'],
+    dict: ['get', 'keys', 'values', 'items', 'pop'],
+    random: ['randint', 'choice', 'random', 'shuffle', 'uniform'],
+    math: ['sqrt', 'floor', 'ceil', 'pow', 'fabs', 'pi']
+  };
+
+  /*
+   * เดาว่าชื่อที่ไม่รู้จักนี้ ผู้เรียนตั้งใจพิมพ์คำไหน
+   * เทียบกับ: คำสั่งพื้นฐาน + ตัวแปร/ฟังก์ชันที่ผู้เรียนสร้างไว้เองในโค้ด
+   * เกณฑ์: ตัวพิมพ์ใหญ่-เล็กต่างกันเฉย ๆ = เดาได้เสมอ / สะกดเพี้ยน 1 ตัว (คำยาว 3+)
+   * หรือเพี้ยน 2 ตัว (คำยาว 5+) — คำสั้นมากไม่เดา กันเดามั่ว
+   */
+  function suggestWord(name, code) {
+    var candidates = KNOWN_BUILTINS.slice();
+    var re = /^\s*([A-Za-z_]\w*)\s*=/gm;
+    var m;
+    while ((m = re.exec(code || '')) !== null) candidates.push(m[1]);
+    re = /def\s+([A-Za-z_]\w*)/g;
+    while ((m = re.exec(code || '')) !== null) candidates.push(m[1]);
+
+    var best = null;
+    var bestScore = 99;
+    for (var i = 0; i < candidates.length; i++) {
+      var cand = candidates[i];
+      if (cand === name) continue;
+      var score;
+      if (cand.toLowerCase() === name.toLowerCase()) {
+        score = 0; // ต่างแค่ตัวพิมพ์ใหญ่-เล็ก
+      } else {
+        var d = editDistance(name.toLowerCase(), cand.toLowerCase());
+        var minLen = Math.min(name.length, cand.length);
+        if (d === 1 && minLen >= 3) score = 1;
+        else if (d === 2 && minLen >= 5) score = 2;
+        else continue;
+      }
+      if (score < bestScore) { bestScore = score; best = cand; }
+    }
+    return best;
+  }
+
   // ---------- catalog กลาง: ข้อความแปลตามชนิด Error ----------
   // แต่ละตัวเป็นฟังก์ชัน รับ (raw, line, code) คืน {what, how}
 
@@ -123,39 +223,130 @@
           how: "ตรวจดูว่าเครื่องหมายคำพูดเปิดกับปิดครบคู่กันไหม เช่น 'สวัสดี' ต้องมีทั้งตัวหน้าและตัวหลัง"
         };
       }
-      // 2) ใช้ = ตัวเดียวในเงื่อนไข (ตั้งใจจะเปรียบเทียบแต่กลายเป็นเก็บค่า)
+      // 1.5) กรณีที่ Skulpt บอกสาเหตุมาตรง ๆ ในข้อความดิบ
+      if (/'return' outside function/i.test(raw)) {
+        return {
+          what: 'มี return อยู่นอกฟังก์ชัน — return คือการส่งค่ากลับ "ออกจากฟังก์ชัน" เลยต้องอยู่ข้างในฟังก์ชันเท่านั้น',
+          how: 'เช็คว่าบรรทัด return ย่อหน้าอยู่ใต้ def แล้วหรือยัง ถ้าแค่อยากแสดงผลเฉย ๆ ใช้ print() แทน'
+        };
+      }
+      if (/'break' outside loop/i.test(raw)) {
+        return {
+          what: 'มี break อยู่นอกลูป — break คือคำสั่ง "หยุดลูปทันที" เลยใช้ได้เฉพาะข้างใน for หรือ while',
+          how: 'เช็คว่าบรรทัด break ย่อหน้าอยู่ในลูปแล้วหรือยัง'
+        };
+      }
+      if (/f-string/i.test(raw)) {
+        return {
+          what: 'วงเล็บปีกกา { } ใน f-string ยังเปิด-ปิดไม่ครบคู่',
+          how: "เช็คว่าชื่อตัวแปรทุกตัวใน f-string ถูกครอบด้วยปีกกาครบทั้งเปิดและปิด เช่น f'สวัสดี {name}'"
+        };
+      }
+      // 2) มีตัวอักษรไทยหลุดอยู่นอกเครื่องหมายคำพูด
+      //    (เผลอพิมพ์คำสั่งตอนแป้นยังเป็นไทย หรือลืมครอบข้อความด้วยเครื่องหมายคำพูด)
+      if (thaiOutsideStrings(code)) {
+        return {
+          what: 'มีตัวอักษรภาษาไทยอยู่นอกเครื่องหมายคำพูด ซึ่ง Python จะอ่านไม่เข้าใจ',
+          how: "ถ้าตั้งใจให้เป็นข้อความ ให้ครอบด้วยเครื่องหมายคำพูด เช่น print('สวัสดี') " +
+               'แต่ถ้าเผลอพิมพ์ตอนแป้นพิมพ์ยังเป็นภาษาไทย ให้สลับแป้นเป็นภาษาอังกฤษก่อน ' +
+               '(กดปุ่ม ~ หรือ Alt+Shift) แล้วพิมพ์คำสั่งนั้นใหม่'
+        };
+      }
+      // 2.5) เขียน print แบบ Python 2 (ไม่มีวงเล็บ) — มักติดมาจากติวเตอร์/หนังสือรุ่นเก่า
+      if (/^print\b\s*[^(\s=]/.test(line.trim())) {
+        return {
+          what: 'print แบบไม่มีวงเล็บเป็นวิธีเขียนของ Python รุ่นเก่า (Python 2) ซึ่งใช้ที่นี่ไม่ได้',
+          how: "Python 3 ต้องมีวงเล็บครอบเสมอ: print('ข้อความ') — ถ้าดูตามคลิปหรือหนังสือ เช็คว่าเป็นเนื้อหา Python 3 นะ"
+        };
+      }
+      // 2.7) def ไม่มีวงเล็บหลังชื่อฟังก์ชัน
+      if (/^def\s+[A-Za-z_]\w*\s*:/.test(line.trim())) {
+        return {
+          what: 'บรรทัด def ขาดวงเล็บหลังชื่อฟังก์ชัน — Python ต้องมีวงเล็บเสมอแม้ไม่มีช่องรับค่า',
+          how: 'เติมวงเล็บก่อนเครื่องหมาย : เช่น def greet(): หรือถ้ามีช่องรับค่า def greet(name):'
+        };
+      }
+      // 2.8) เอาคำสั่งของ Python มาตั้งเป็นชื่อตัวแปร เช่น for = 5
+      var kwAssign = /^(if|elif|else|for|while|def|return)\s*=[^=]/.exec(line.trim());
+      if (kwAssign) {
+        return {
+          what: "คำว่า '" + kwAssign[1] + "' เป็นคำสั่งของ Python เอามาตั้งเป็นชื่อตัวแปรไม่ได้",
+          how: 'เปลี่ยนไปใช้ชื่ออื่นที่สื่อความหมาย เช่น count, total, score'
+        };
+      }
+      // 3) เขียนเงื่อนไขตามหลัง else (else ไม่รับเงื่อนไข — พลาดบ่อยตอนเรียน if/else ใหม่ ๆ)
+      if (/^else\s+\S/.test(line.trim())) {
+        return {
+          what: 'else ไม่ต้องมีเงื่อนไขตามหลัง เพราะมันแปลว่า "กรณีที่เหลือทั้งหมด" อยู่แล้ว',
+          how: 'เขียนแค่ else: เฉย ๆ แล้วขึ้นบรรทัดใหม่ย่อหน้า — แต่ถ้าอยากใส่เงื่อนไขเพิ่ม ให้ใช้ elif เงื่อนไข: แทน'
+        };
+      }
+      // 3.3) วาง elif ไว้หลัง else (else ต้องเป็นทางเลือกสุดท้ายเสมอ)
+      //      สแกนขึ้นไปหา else: ด้านบน — ถ้าเจอ if ก่อนแปลว่าลำดับปกติ หยุดหา
+      if (/^elif\b/.test(line.trim()) && lineNo) {
+        var above = String(code || '').split('\n').slice(0, lineNo - 1);
+        for (var ai = above.length - 1; ai >= 0; ai--) {
+          if (/^\s*else\s*:/.test(above[ai])) {
+            return {
+              what: 'มี elif มาอยู่หลัง else — Python เช็คเงื่อนไขจากบนลงล่าง ดังนั้น else ต้องเป็นทางเลือก "สุดท้าย" เสมอ',
+              how: 'ย้ายบล็อก elif ขึ้นไปไว้ก่อน else ให้เรียงเป็น if → elif → else'
+            };
+          }
+          if (/^\s*if\b/.test(above[ai])) break;
+        }
+      }
+      // 3.5) คำสั่งหัวบรรทัดสะกดผิด เช่น esle, whlie, fro
+      var firstWord = (line.trim().match(/^([A-Za-z_]+)/) || [])[1];
+      if (firstWord && KEYWORDS.indexOf(firstWord) === -1 && KNOWN_BUILTINS.indexOf(firstWord) === -1) {
+        for (var kw = 0; kw < KEYWORDS.length; kw++) {
+          if (firstWord.length >= 3 && editDistance(firstWord.toLowerCase(), KEYWORDS[kw]) === 1) {
+            return {
+              what: "Python อ่านคำว่า '" + firstWord + "' ไม่ออก — สะกดใกล้เคียงกับคำสั่ง '" + KEYWORDS[kw] + "' มากเลย",
+              how: "ลองแก้เป็น " + KEYWORDS[kw] + " ดู (คำสั่งของ Python ต้องสะกดเป๊ะทุกตัวอักษร)"
+            };
+          }
+        }
+      }
+      // 4) ใช้ = ตัวเดียวในเงื่อนไข (ตั้งใจจะเปรียบเทียบแต่กลายเป็นเก็บค่า)
       if (assignmentInCondition(line)) {
         return {
           what: 'ในบรรทัดเงื่อนไขมีเครื่องหมาย = ตัวเดียว ซึ่งแปลว่า "เก็บค่า" — แต่การเปรียบเทียบว่าเท่ากันไหมต้องใช้ == (สองตัวติดกัน)',
           how: 'เปลี่ยน = ในเงื่อนไขให้เป็น == เช่น if x == 5: (ส่วน = ตัวเดียวเอาไว้ใช้ตอนสร้างตัวแปร)'
         };
       }
-      // 3) ลืมใส่ : ท้ายบรรทัดหัวบล็อก
+      // 4) ลืมใส่ : ท้ายบรรทัดหัวบล็อก
       if (missingColon(line)) {
         return {
           what: 'บรรทัดนี้ขึ้นต้นด้วยคำสั่งอย่าง if / for / while / def ซึ่ง Python ต้องการเครื่องหมายพิเศษปิดท้าย',
           how: 'ลองดูท้ายบรรทัดว่าลืมเครื่องหมาย : (โคลอน) หรือเปล่า'
         };
       }
-      // 4) บรรทัดก่อนหน้าเปิดบล็อกด้วย : แล้ว แต่บรรทัดนี้ไม่ได้ย่อหน้า
+      // 5) บรรทัดก่อนหน้าเปิดบล็อกด้วย : แล้ว แต่บรรทัดนี้ไม่ได้ย่อหน้า
       if (missingIndentAfterColon(code, lineNo)) {
         return {
           what: 'บรรทัดก่อนหน้าจบด้วยเครื่องหมาย : แปลว่าบรรทัดถัดมาต้องย่อหน้าเข้าไปเป็นลูกของมัน',
           how: 'เพิ่มการย่อหน้า 4 ช่องว่างหน้าบรรทัดที่อยู่ใน if / for / while / def นั้น'
         };
       }
-      // 5) วงเล็บเหลี่ยมของลิสต์ไม่ครบคู่
+      // 6) วงเล็บเหลี่ยมของลิสต์ไม่ครบคู่
       if (unbalancedBrackets(code)) {
         return {
           what: 'วงเล็บเหลี่ยม [ กับ ] ในโค้ดมีจำนวนไม่เท่ากัน (มักเกิดตอนสร้างหรือเรียกใช้ลิสต์)',
           how: 'ไล่ดูบรรทัดที่มีลิสต์ว่าเปิด [ แล้วปิด ] ครบทุกอันไหม'
         };
       }
-      // 6) วงเล็บเปิด-ปิดไม่ครบคู่ (Skulpt มักรายงานว่า EOF in multi-line statement)
+      // 7) วงเล็บเปิด-ปิดไม่ครบคู่ (Skulpt มักรายงานว่า EOF in multi-line statement)
       if (unbalancedParens(code) || /EOF in multi-line/i.test(raw)) {
         return {
           what: 'วงเล็บเปิดกับวงเล็บปิดในโค้ดมีจำนวนไม่เท่ากัน',
           how: 'ไล่ดูทีละบรรทัดว่าวงเล็บ ( กับ ) จับคู่กันครบทุกอันไหม โดยเฉพาะท้ายคำสั่ง print(...)'
+        };
+      }
+      // 8) ลิสต์ที่ลืมจุลภาคคั่นตัวเลข เช่น [1 2 3] (เช็คท้าย ๆ เพราะรูปแบบกำกวมกว่าแบบอื่น)
+      if (/\[[^\]]*\d\s+['"\d]/.test(line)) {
+        return {
+          what: 'สมาชิกในลิสต์ยังไม่ได้คั่นด้วยจุลภาค — Python เลยอ่านไม่ออกว่ามีกี่ชิ้น',
+          how: 'ใส่เครื่องหมาย , คั่นระหว่างสมาชิกทุกตัว เช่น [1, 2, 3]'
         };
       }
       return {
@@ -171,12 +362,16 @@
       };
     },
 
-    NameError: function (raw) {
+    NameError: function (raw, lineNo, code) {
       var name = extractName(raw);
       if (name) {
+        // ลองเดาว่าตั้งใจพิมพ์คำไหน (เช่น pritn → print, PRINT → print)
+        var guess = suggestWord(name, code);
         return {
           what: "Python ไม่รู้จักชื่อ '" + name + "' — อาจยังไม่ได้สร้างตัวแปรนี้ หรือสะกดไม่ตรงกับตอนที่สร้างไว้",
-          how: 'เช็คว่าสร้างตัวแปรชื่อนี้ก่อนใช้งานแล้วหรือยัง และตัวสะกดตรงกันทุกตัวอักษรไหม (ตัวพิมพ์เล็ก-ใหญ่มีผลนะ)'
+          how: guess
+            ? "สะกดใกล้เคียงกับ '" + guess + "' มากเลย — ตั้งใจพิมพ์คำนั้นหรือเปล่า? (ตัวพิมพ์เล็ก-ใหญ่ก็มีผลนะ)"
+            : 'เช็คว่าสร้างตัวแปรชื่อนี้ก่อนใช้งานแล้วหรือยัง และตัวสะกดตรงกันทุกตัวอักษรไหม (ตัวพิมพ์เล็ก-ใหญ่มีผลนะ)'
         };
       }
       return {
@@ -205,6 +400,28 @@
           how: 'นับดูว่าตอนนิยาม def ' + mArgs[1] + '(...) มีช่องรับกี่ตัว แล้วตอนเรียกใช้ก็ใส่ค่าให้ครบเท่ากันทุกช่อง'
         };
       }
+      // for วนกับตัวเลขเดี่ยว ๆ เช่น for i in 5:
+      var mIter = /'(int|float)' object is not iterable/.exec(raw);
+      if (mIter) {
+        return {
+          what: 'for วนกับตัวเลขเดี่ยว ๆ ไม่ได้ — มันต้องการ "ชุดของ" ที่หยิบได้ทีละตัว',
+          how: 'ถ้าอยากวนตามจำนวนครั้ง ใช้ range() ครอบ เช่น for i in range(5): หรือจะวนกับลิสต์ก็ได้'
+        };
+      }
+      // len() กับของที่นับไม่ได้ เช่น len(5)
+      if (/has no len\(\)/.test(raw)) {
+        return {
+          what: 'len() ใช้นับจำนวนของที่เป็น "ชุด" เช่น ลิสต์หรือข้อความ — ตัวเลขเดี่ยว ๆ ไม่มีอะไรให้นับ',
+          how: 'เช็คว่าสิ่งที่ใส่ใน len() เป็นลิสต์หรือข้อความจริงไหม เช่น len(scores) หรือ len(name)'
+        };
+      }
+      // เรียกตำแหน่งของข้อความด้วยสิ่งที่ไม่ใช่ตัวเลข เช่น s['a']
+      if (/string indices must be integers/i.test(raw)) {
+        return {
+          what: 'ตำแหน่งของตัวอักษรในข้อความต้องเป็น "ตัวเลข" ไม่ใช่ข้อความ',
+          how: 'ใช้เลขตำแหน่งในวงเล็บเหลี่ยม เช่น name[0] คือตัวอักษรแรก (เริ่มนับจาก 0)'
+        };
+      }
       // เอาข้อความ (str) ไปบวกกับตัวเลขตรง ๆ
       if (/(concatenate|unsupported operand|can only concat|str.*int|int.*str)/i.test(raw)) {
         return {
@@ -223,6 +440,20 @@
         return {
           what: 'มีการพยายามแปลงข้อความที่ไม่ใช่ตัวเลขให้เป็นตัวเลข เช่น int(\'สวัสดี\') ซึ่งแปลงไม่ได้',
           how: 'เช็คว่าค่าที่ส่งเข้า int() หรือ float() เป็นตัวเลขจริง ๆ ถ้ารับจาก input() ลองกรอกเป็นตัวเลขดู'
+        };
+      }
+      // ลบของที่ไม่มีอยู่ในลิสต์
+      if (/list\.remove/i.test(raw) || /not in list/i.test(raw)) {
+        return {
+          what: 'พยายามลบ (remove) ของที่ไม่มีอยู่ในลิสต์ — Python หาไม่เจอเลยหยุดทำงาน',
+          how: 'เช็คว่าค่าที่จะลบสะกดตรงกับที่อยู่ในลิสต์เป๊ะ ๆ ไหม หรือเช็คก่อนด้วย if ค่า in ลิสต์:'
+        };
+      }
+      // ค่านอกขอบเขตของฟังก์ชันคณิตศาสตร์ เช่น sqrt ของเลขติดลบ
+      if (/math domain/i.test(raw)) {
+        return {
+          what: 'ค่าที่ส่งให้ฟังก์ชันคณิตศาสตร์อยู่นอกขอบเขตที่มันรับได้ เช่น หารากที่สองของเลขติดลบ',
+          how: 'เช็คว่าค่าที่ส่งเข้าไปเป็นบวกหรืออยู่ในช่วงที่ฟังก์ชันนั้นรองรับ'
         };
       }
       return {
@@ -290,7 +521,50 @@
       };
     },
 
-    AttributeError: function () {
+    AttributeError: function (raw) {
+      // ดึงชนิดข้อมูล (หรือชื่อโมดูล) กับชื่อ method ที่เรียกไม่เจอ
+      var m = /'(\w+)' object has no attribute '(\w+)'/.exec(raw) ||
+              /module '(\w+)' has no attribute '(\w+)'/.exec(raw);
+      if (m) {
+        var typ = m[1];
+        var attr = m[2];
+        var isModule = raw.indexOf('module') !== -1;
+        var typLabel = isModule ? 'โมดูล ' + typ : 'ข้อมูลชนิด ' + typ;
+
+        // 1) method นี้มีจริงแต่เป็นของชนิดอื่น (ใช้ข้ามชนิด) เช่น เรียก .append กับข้อความ
+        for (var owner in TYPE_METHODS) {
+          if (owner !== typ && TYPE_METHODS[owner].indexOf(attr) !== -1) {
+            if (typ === 'str' && owner === 'list') {
+              return {
+                what: 'ข้อความ (str) ไม่มีคำสั่ง .' + attr + ' — คำสั่งนี้เป็นของลิสต์',
+                how: 'ถ้าอยากต่อข้อความ ใช้เครื่องหมาย + หรือ f-string แทน แต่ถ้าตั้งใจจะใช้ลิสต์ ต้องสร้างด้วยวงเล็บเหลี่ยม [ ] ก่อน'
+              };
+            }
+            return {
+              what: typLabel + ' ไม่มีคำสั่ง .' + attr + ' — คำสั่งนี้เป็นของ ' + owner,
+              how: 'เช็คว่าตัวแปรที่เรียกใช้เก็บข้อมูลชนิดที่ตั้งใจไว้จริงหรือเปล่า'
+            };
+          }
+        }
+
+        // 2) น่าจะสะกด method ผิด — เดาจากรายการคำสั่งของชนิดตัวเอง
+        var pool = TYPE_METHODS[typ] || [];
+        for (var i = 0; i < pool.length; i++) {
+          var d = editDistance(attr.toLowerCase(), pool[i].toLowerCase());
+          var minLen = Math.min(attr.length, pool[i].length);
+          if ((d === 1 && minLen >= 3) || (d === 2 && minLen >= 5)) {
+            return {
+              what: typLabel + ' ไม่มีคำสั่งชื่อ .' + attr,
+              how: 'สะกดใกล้เคียงกับ .' + pool[i] + ' มากเลย — ตั้งใจพิมพ์คำนั้นหรือเปล่า?'
+            };
+          }
+        }
+
+        return {
+          what: typLabel + ' ไม่มีคำสั่งชื่อ .' + attr,
+          how: 'เช็คตัวสะกดของคำสั่งหลังจุด และดูว่าตัวแปรเก็บข้อมูลชนิดที่คิดไว้จริงไหม'
+        };
+      }
       return {
         what: 'มีการเรียกใช้ความสามารถที่ข้อมูลชนิดนั้นไม่มี เช่น เรียก .append กับสิ่งที่ไม่ใช่ลิสต์',
         how: 'เช็คว่าตัวแปรตัวนั้นเก็บข้อมูลชนิดอะไรอยู่ แล้วสะกดชื่อคำสั่งถูกไหม'

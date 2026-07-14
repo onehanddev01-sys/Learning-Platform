@@ -16,6 +16,8 @@
     <a class="topbar-back" href="map.html">แผนที่บทเรียน</a>
     <div class="topbar-title">Python เริ่มจากศูนย์</div>
     <span id="module-chip" class="module-chip"></span>
+    <button id="sound-btn" class="sound-btn" type="button" title="ปิดเสียง" aria-label="เปิดหรือปิดเสียงประกอบ"></button>
+    <div id="account-slot" class="account-slot"></div>
   </header>
 
   <main class="mission-layout">
@@ -83,13 +85,25 @@
   <script>window.CodeMirror || document.write('<script src="vendor/codemirror/codemirror.min.js"><\/script>');</script>
   <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/python/python.min.js"></script>
   <script>(window.CodeMirror && CodeMirror.modes.python) || document.write('<script src="vendor/codemirror/python.min.js"><\/script>');</script>
+  <!-- addon ช่วยปิดวงเล็บ/เครื่องหมายคำพูดอัตโนมัติ สำหรับผู้เรียนที่ยังพิมพ์สัญลักษณ์ไม่คล่อง -->
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script>(window.CodeMirror && ('autoCloseBrackets' in CodeMirror.defaults)) || document.write('<script src="vendor/codemirror/closebrackets.min.js"><\/script>');</script>
+
+  <!-- Firebase (compat) — ระบบบัญชีและการซิงก์ข้ามอุปกรณ์ (ไม่บังคับ; ออฟไลน์ก็ใช้เว็บได้) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
 
   <script src="data/missions.js"></script>
   <script src="js/progress.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/hints.js"></script>
   <script src="js/errors.js"></script>
   <script src="js/checker.js"></script>
   <script src="js/runner.js"></script>
+  <script src="js/sounds.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
