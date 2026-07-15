@@ -170,19 +170,6 @@ code {
   white-space: nowrap;
 }
 
-/* ปุ่มเปิด/ปิดเสียงประกอบ บน topbar */
-.sound-btn {
-  background: transparent;
-  border: none;
-  color: #aeb9e8;
-  cursor: pointer;
-  padding: 5px;
-  display: inline-flex;
-  align-items: center;
-  border-radius: 8px;
-}
-.sound-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
-
 /* ---------- หน้า Welcome ---------- */
 
 .welcome-page { background: var(--navy); }
@@ -871,7 +858,7 @@ a.map-node:hover { background: #f4f6fd; }
   .hero-content h1 { font-size: 34px; }
   .taskbar-text { white-space: normal; font-size: 13.5px; }
   .module-chip { display: none; }
-  .sound-btn { margin-left: auto; } /* module-chip ที่เคยดันขวาถูกซ่อน ให้ปุ่มเสียงดันตัวเองแทน */
+  .account-slot { margin-left: auto; } /* module-chip ที่เคยดันขวาถูกซ่อน ให้ปุ่มบัญชีดันตัวเองแทน */
 }
 
 /* ---------- ปุ่มบัญชี/เข้าสู่ระบบ บน topbar + หน้าต่างเข้าสู่ระบบ ---------- */

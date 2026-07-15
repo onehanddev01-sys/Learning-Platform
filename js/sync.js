@@ -5,14 +5,13 @@
  * Cloud Firestore เป็นสำเนาที่ "ผสาน" (merge) ตอนเข้าสู่ระบบ แล้วซิงก์ตามเมื่อมีการเปลี่ยนแปลง
  * ถ้าไม่ได้เข้าสู่ระบบ ทุกอย่างทำงานเหมือนเดิมทุกประการ (ไม่มีการเรียก cloud)
  *
- * โครงเอกสาร cloud: users/{uid} = { email, displayName, ..., progress:{...}, savedCode:{...}, settings:{...} }
- * ตรงกับพจนานุกรมข้อมูลในบทที่ 2 หัวข้อ 4.19
+ * โครงเอกสาร cloud: users/{uid} = { email, displayName, ..., progress:{...}, savedCode:{...} }
+ * ตรงกับพจนานุกรมข้อมูลในบทที่ 2 หัวข้อ 4.18
  */
 (function (global) {
   'use strict';
 
   var FB = global.FB || {};
-  var SOUND_KEY = 'pylearn_sound_muted_v1';
   var PUSH_DELAY = 1500; // หน่วงเวลาก่อนดันขึ้น cloud (debounce) กันเขียนถี่เกิน
   var pushTimer = null;
 
@@ -20,13 +19,6 @@
     var M = global.MISSIONS || [];
     for (var i = 0; i < M.length; i++) if (M[i].id === id) return i;
     return -1;
-  }
-
-  function getSoundMuted() {
-    try { return localStorage.getItem(SOUND_KEY) === '1'; } catch (e) { return false; }
-  }
-  function setSoundMuted(v) {
-    try { if (v) localStorage.setItem(SOUND_KEY, '1'); else localStorage.removeItem(SOUND_KEY); } catch (e) { /* ข้ามได้ */ }
   }
 
   function deviceLabel() {
@@ -57,8 +49,7 @@
         capstoneDone: !!state.capstoneDone,
         hintState: state.hintState || {}
       },
-      savedCode: state.savedCode || {},
-      settings: { soundMuted: getSoundMuted() }
+      savedCode: state.savedCode || {}
     };
   }
 
@@ -133,10 +124,6 @@
 
       global.Progress.importState(merged); // เขียนกลับ local (แบบ silent)
 
-      if (cloud && cloud.settings && typeof cloud.settings.soundMuted === 'boolean') {
-        setSoundMuted(cloud.settings.soundMuted);
-      }
-
       var after = global.Progress.load();
       var payload = toCloud(after, user);
       if (cloud && cloud.createdAt) payload.createdAt = cloud.createdAt;
@@ -165,9 +152,7 @@
 
   global.Sync = {
     syncOnLogin: syncOnLogin,
-    schedulePush: schedulePush,
-    getSoundMuted: getSoundMuted,
-    setSoundMuted: setSoundMuted
+    schedulePush: schedulePush
   };
 
   // สมัครรับการเปลี่ยนแปลงของ Progress -> ดันขึ้น cloud อัตโนมัติ

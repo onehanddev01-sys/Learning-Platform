@@ -11,13 +11,6 @@
   var ICON_BULB = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>';
   var ICON_CHECK = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
   var ICON_MAP = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>';
-  var ICON_SOUND_ON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
-  var ICON_SOUND_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
-
-  // ตัวช่วยเล่นเสียง — ถ้าโมดูลเสียงโหลดไม่สำเร็จ เว็บต้องทำงานต่อได้ปกติ
-  function sfx(name) {
-    if (window.Sounds) Sounds.play(name);
-  }
   var ICON_STAR = '<svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
 
   // ---------- ตัวช่วยทั่วไป ----------
@@ -276,13 +269,11 @@
     inner += '<details class="raw-error"><summary>ดูข้อความต้นฉบับ (ภาษาอังกฤษ)</summary><pre>' +
       escapeHtml(tr.raw) + '</pre></details>';
     appendBox('fail-box', inner);
-    sfx('fail'); // สองโน้ตต่ำนุ่ม ๆ "ยังไม่ใช่ ลองใหม่" — ไม่ใช่เสียงผิดน่ากลัว
   }
 
   function showCheckFailBox(message) {
     appendBox('fail-box', '<div class="fail-title">ยังไม่ผ่าน แต่ใกล้แล้ว</div>' +
       '<div class="fail-what">' + escapeHtml(message) + '</div>');
-    sfx('fail');
   }
 
   function showInfoBox(message) {
@@ -361,7 +352,6 @@
     renderHints(noteText);
     hintPanel.classList.remove('hidden');
     updateHintBtnLabel(); // ครอบคลุมกรณีระบบเปิดคำใบ้ให้อัตโนมัติด้วย
-    if (noteText) sfx('hint'); // มีข้อความกำกับ = ระบบเปิดให้เอง → กระดิ่งเรียกสุภาพ
   }
 
   // ปรับป้ายปุ่มหลัก: ถ้ามีคำใบ้เปิดอยู่แล้ว ปุ่มนี้ทำหน้าที่แค่ "เปิดดู" ไม่ขอเพิ่ม
@@ -412,7 +402,6 @@
   }
 
   function showWin() {
-    sfx('win'); // อาร์เพจโจไต่ขึ้น — เฉลิมฉลองสั้น ๆ ไม่โฉ่งฉ่าง
     var overlay = $('win-overlay');
     $('win-message').textContent = mission.winMessage;
     var next = nextMissionOf(missionId);
@@ -467,23 +456,6 @@
   updateHintBtnLabel();
   var backLink = document.querySelector('.topbar-back');
   if (backLink) backLink.innerHTML = ICON_MAP + ' แผนที่บทเรียน';
-
-  // ปุ่มเปิด/ปิดเสียง — จำค่าไว้ใน localStorage ข้ามเซสชัน
-  var soundBtn = $('sound-btn');
-  function updateSoundBtn() {
-    if (!soundBtn || !window.Sounds) return;
-    soundBtn.innerHTML = Sounds.isMuted() ? ICON_SOUND_OFF : ICON_SOUND_ON;
-    soundBtn.title = Sounds.isMuted() ? 'เปิดเสียง' : 'ปิดเสียง';
-  }
-  if (soundBtn) {
-    soundBtn.addEventListener('click', function () {
-      if (!window.Sounds) return;
-      Sounds.setMuted(!Sounds.isMuted());
-      updateSoundBtn();
-      if (!Sounds.isMuted()) sfx('pass'); // เปิดกลับมา → เล่นโน้ตสั้นให้รู้ว่าได้ยินแล้ว
-    });
-    updateSoundBtn();
-  }
 
   function setRunning(state) {
     isRunning = state;
@@ -601,7 +573,6 @@
           showWin();
         } else {
           appendBox('pass-box', 'ยังผ่านภารกิจอยู่ เยี่ยม! ทดลองแก้โค้ดเล่นต่อได้เต็มที่ พร้อมเมื่อไหร่ค่อยกดด่านถัดไปด้านล่าง');
-          sfx('pass'); // โน้ตเดียวเบา ๆ พอรู้ว่ายังเวิร์กอยู่
         }
       } else {
         showCheckFailBox(verdict.message);

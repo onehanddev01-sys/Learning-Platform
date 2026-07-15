@@ -20,8 +20,10 @@
 │   ├── checker.js        Pass/Fail Engine ตรวจ 2 ชั้น
 │   ├── errors.js         ระบบแปล Error เป็นภาษาไทย + catalog กลาง
 │   ├── hints.js          ระบบคำใบ้ 3 ระดับ + เปิดอัตโนมัติเมื่อ Error เดิมซ้ำ
-│   ├── progress.js       localStorage + กติกาปลดล็อก + in-memory fallback
-│   ├── sounds.js         เสียงประกอบสร้างด้วย Web Audio API (ไม่มีไฟล์เสียง)
+│   ├── progress.js       localStorage + กติกาปลดล็อก + in-memory fallback (+ hook onChange/importState สำหรับซิงก์)
+│   ├── firebase-config.js เริ่มต้น Firebase (compat) — ถ้าโหลดไม่ได้ระบบยังทำงานแบบ local
+│   ├── sync.js           ผสาน + ซิงก์ความก้าวหน้า localStorage <-> Cloud Firestore
+│   ├── auth.js           ปุ่มบัญชี/เข้าสู่ระบบ (Google + Email/Password) + ฟังสถานะ auth
 │   ├── app.js            ตัวควบคุมหน้า mission (เรนเดอร์เนื้อหา, ปุ่ม Run/Hint, auto-save)
 │   └── map.js            เรนเดอร์แผนที่ภารกิจ + ปุ่มเริ่มใหม่ทั้งหมด
 ├── data/
@@ -294,14 +296,9 @@ fallback ทั่วไปซึ่งยังเป็นภาษาไท�
     ตำแหน่งข้อความด้วยข้อความ, remove ของที่ไม่มี, math domain (ง) AttributeError อัจฉริยะ —
     จับใช้ method ข้ามชนิด + เดา method สะกดผิดจากตาราง method จริงของแต่ละชนิด
     ทดสอบด้วย Adversarial Wave 2 อีก 17 เคส → ตรงเป้า 17/17 (รวมทุก wave = 44 เคส)
-30. **เสียงประกอบสร้างด้วยโค้ด (sounds.js):** เสียง feedback 4 แบบสร้างสดด้วย Web Audio API
-    — ผ่านครั้งแรก (อาร์เพจโจ C-E-G-C), ผ่านซ้ำ (โน้ตเดียวเบา), ยังไม่ผ่าน (สองโน้ตต่ำนุ่ม
-    โทน "ยังไม่ใช่" ไม่ใช่เสียงผิดน่ากลัว — สอดคล้องหลัก Error คือข้อมูล), คำใบ้เปิดอัตโนมัติ
-    (กระดิ่งสูงสั้น) — ไม่มีไฟล์เสียง = ไม่มีประเด็นลิขสิทธิ์และเว็บไม่หนักขึ้น เล่นเฉพาะ "ผลลัพธ์"
-    ไม่เล่นทุกการกดปุ่ม (Positive Reinforcement โดยไม่เป็น seductive detail) มีปุ่มปิดเสียงบน
-    topbar จำค่าใน localStorage (key `pylearn_sound_muted_v1`) และจงใจไม่ทำเพลงพื้นหลัง
-    เพราะขัดหลักการในบทที่ 2 ตรง ๆ — เสียงพังไม่มีทางพาเว็บพัง (try/catch ครอบทั้งหมด
-    และเบราว์เซอร์ที่ไม่มี Web Audio จะกลายเป็น no-op เงียบ ๆ)
+30. **ถอดระบบเสียงประกอบออก:** เดิมมีเสียง feedback สังเคราะห์ด้วย Web Audio API (sounds.js) แต่ภายหลัง
+    ตัดออกทั้งหมดตามคำขอของเจ้าของโครงงาน (ลบ sounds.js, ปุ่มปิดเสียงบน topbar, และ key
+    `pylearn_sound_muted_v1`) — การเรนเดอร์และการเรียนไม่พึ่งเสียงอยู่แล้ว จึงไม่กระทบการทำงาน
 
 ## 9. ผลการทดสอบ (Definition of Done)
 
@@ -380,7 +377,7 @@ Vercel ได้ทันทีโดยไม่ต้องตั้งค่�
 - `js/progress.js` — เพิ่ม `onChange(cb)` (เรียก listener หลัง save) และ `importState(partial)` (เขียนสถานะผสานกลับแบบ silent กันลูป) ; `save(state, silent)` เพิ่มพารามิเตอร์ silent
 - โหลด Firebase SDK จาก gstatic (compat: app/auth/firestore) ก่อน `data/missions.js` ; ต่อด้วย sync.js + auth.js หลัง progress.js ในทั้ง 3 หน้า + เพิ่ม `<div id="account-slot">` บน topbar/hero
 
-**โครงเอกสาร Firestore:** `users/{uid}` = `{ email, displayName, photoURL, provider, role, createdAt, updatedAt, lastLoginAt, lastDeviceLabel, progress:{completed[], currentMissionId, capstoneDone, hintState}, savedCode:{}, settings:{soundMuted} }` — หนึ่งเอกสารต่อผู้ใช้ (uid เป็นชื่อเอกสาร)
+**โครงเอกสาร Firestore:** `users/{uid}` = `{ email, displayName, photoURL, provider, role, createdAt, updatedAt, lastLoginAt, lastDeviceLabel, progress:{completed[], currentMissionId, capstoneDone, hintState}, savedCode:{} }` — หนึ่งเอกสารต่อผู้ใช้ (uid เป็นชื่อเอกสาร)
 
 **กติกาผสานตอน login (sync.js merge()):** completed = union / capstoneDone = OR / currentMissionId = ด่านที่ index สูงกว่า / hintState = max รายด่าน / savedCode = ฝั่งที่ updatedAt ใหม่กว่าชนะรายด่าน — เขียนกลับ local ด้วย `Progress.importState` แล้ว `location.reload()` เฉพาะเมื่อ signature เปลี่ยน / errorTracking **ไม่ซิงก์** (ชั่วคราวระดับ session)
 
@@ -396,6 +393,6 @@ service cloud.firestore {
 }
 ```
 
-**สิ่งที่ต้องตั้งใน Firebase Console ก่อนใช้จริง:** (1) Authentication → เปิด Google + Email/Password (2) Firestore Database → สร้าง (production mode) (3) วาง Security Rules ข้างบน (4) Authentication → Settings → Authorized domains → เพิ่มโดเมน Vercel
+**การตั้งค่าใน Firebase Console (ทำครบแล้ว):** (1) Authentication → เปิด Google + Email/Password (2) Firestore Database → สร้าง (Standard edition, production mode, asia-southeast1) (3) วาง Security Rules ข้างบน (4) Authentication → Settings → Authorized domains → เพิ่มโดเมน Vercel
 
-**ทดสอบแล้ว (ที่ทดสอบได้โดยไม่ต้องมีบัญชีจริง):** ทั้ง 3 หน้าโหลด Firebase ไม่มี error / ปุ่มเข้าสู่ระบบขึ้นครบ / modal เปิดครบ (Google + อีเมล + สลับสมัคร) / **guest รันโค้ดผ่านด่าน m0 ได้ปกติ progress บันทึก + win overlay เด้ง** (ยืนยัน hook ใน progress.js ไม่กระทบของเดิม) — ส่วนการล็อกอินจริง/การซิงก์ Firestore ต้องทดสอบหลังตั้ง Console เสร็จ
+**สถานะ: ใช้งานจริงแล้ว (deployed + tested end-to-end):** เผยแพร่บน Vercel ที่ `learning-platform-rho-eight.vercel.app` / ทดสอบล็อกอินด้วยบัญชี Google สำเร็จ → เอกสาร `users/{uid}` ถูกสร้างใน Firestore จริงพร้อมฟิลด์ครบ (email, displayName, provider, lastDeviceLabel, progress) / guest (ไม่ล็อกอิน) รันโค้ดผ่านด่านได้ปกติ progress บันทึกใน localStorage เหมือนเดิม / โหลดทั้ง 3 หน้าไม่มี console error
