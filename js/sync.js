@@ -98,14 +98,23 @@
     };
   }
 
+  // เรียง key ของ object ตามตัวอักษรก่อนแปลงเป็นข้อความ
+  // (Firestore ไม่รับประกันลำดับฟิลด์ตอนอ่านกลับมา ต้องเรียงเองก่อนเทียบ
+  // ไม่งั้นเนื้อหาเหมือนกันแต่ลำดับต่างกันจะถูกมองว่า "เปลี่ยน" แล้ว reload วนไม่จบ)
+  function sortedKeys(o) {
+    var out = {};
+    Object.keys(o || {}).sort().forEach(function (k) { out[k] = o[k]; });
+    return out;
+  }
+
   // ลายเซ็นของสถานะไว้เทียบว่าเปลี่ยนไหม (จะได้รู้ว่าต้อง reload หน้าไหม)
   function signature(s) {
     return JSON.stringify({
       c: (s.completed || []).slice().sort(),
       cur: s.currentMissionId,
       cap: !!s.capstoneDone,
-      h: s.hintState || {},
-      s: s.savedCode || {}
+      h: sortedKeys(s.hintState),
+      s: sortedKeys(s.savedCode)
     });
   }
 
