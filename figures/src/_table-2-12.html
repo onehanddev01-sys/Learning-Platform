@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>ชื่อฟิลด์</th><th>ชนิดข้อมูล</th><th>ความหมาย</th><th>แหล่งที่มา / หมายเหตุ</th></tr>
+<tr><td>(รหัสเอกสาร)</td><td>string</td><td>รหัสประจำตัวผู้ใช้ (uid) ใช้เป็นชื่อเอกสาร</td><td>จาก Firebase Authentication</td></tr>
+<tr><td>email</td><td>string</td><td>อีเมลของผู้ใช้</td><td>จากผู้ให้บริการยืนยันตัวตน</td></tr>
+<tr><td>displayName</td><td>string</td><td>ชื่อที่แสดงของผู้ใช้</td><td>จากบัญชี Google หรือที่ผู้ใช้กรอก</td></tr>
+<tr><td>photoURL</td><td>string หรือ null</td><td>ที่อยู่รูปโปรไฟล์ (ถ้ามี)</td><td>จากบัญชี Google</td></tr>
+<tr><td>provider</td><td>string</td><td>วิธีเข้าสู่ระบบ: "google.com" หรือ "password"</td><td>จาก Firebase Authentication</td></tr>
+<tr><td>role</td><td>string</td><td>บทบาท: "member" (ค่าเริ่มต้น) หรือ "admin"</td><td>กำหนดโดยระบบ</td></tr>
+<tr><td>createdAt</td><td>timestamp</td><td>เวลาสร้างบัญชีครั้งแรก</td><td>ระบบบันทึกตอนสมัคร</td></tr>
+<tr><td>updatedAt</td><td>timestamp</td><td>เวลาปรับปรุงข้อมูลล่าสุด</td><td>ใช้ประกอบการผสานข้อมูล</td></tr>
+<tr><td>lastLoginAt</td><td>timestamp</td><td>เวลาเข้าสู่ระบบครั้งล่าสุด</td><td>ระบบบันทึกตอนเข้าสู่ระบบ</td></tr>
+<tr><td>lastDeviceLabel</td><td>string</td><td>ป้ายกำกับอุปกรณ์ที่ใช้ล่าสุด</td><td>เพื่อผู้ใช้ทราบว่าซิงก์จากเครื่องใด</td></tr>
+<tr><td>progress</td><td>map</td><td>กลุ่มข้อมูลความก้าวหน้า (ดูตารางที่ 2-13)</td><td>—</td></tr>
+<tr><td>savedCode</td><td>map</td><td>โค้ดที่บันทึกของแต่ละด่าน (ดูตารางที่ 2-14)</td><td>—</td></tr>
+</table></div></body></html>

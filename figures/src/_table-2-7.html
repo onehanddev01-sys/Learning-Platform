@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>หลักการ</th><th>ความหมาย</th><th>เหตุผลเชิงออกแบบ</th></tr>
+<tr><td>ให้ความสำคัญกับข้อมูลในเครื่องก่อน (Local-first)</td><td>ข้อมูลหลักอยู่ใน localStorage คลาวด์เป็นสำเนาที่ซิงก์ตาม</td><td>ระบบใช้งานได้แม้ออฟไลน์และไม่ล็อกอิน คงคุณค่าเดิมของระบบไว้ครบ</td></tr>
+<tr><td>บัญชีเป็นทางเลือก (Optional Account)</td><td>ไม่บังคับสมัครสมาชิก เข้ามาก็เขียนโค้ดได้ทันที</td><td>ลดอุปสรรคการเข้าถึงตามหัวข้อ 1.1 ไม่ผลักผู้เรียนออกตั้งแต่หน้าแรก</td></tr>
+<tr><td>ปลอดภัยด้วยกฎ ไม่ใช่การซ่อน (Security by Rules)</td><td>ควบคุมสิทธิ์ที่ชั้นฐานข้อมูลด้วย Security Rules</td><td>ผู้ใช้เข้าถึงได้เฉพาะข้อมูลของตนเอง แม้โค้ดฝั่งหน้าเว็บเปิดเผยก็ไม่กระทบความปลอดภัย</td></tr>
+<tr><td>เก็บข้อมูลเท่าที่จำเป็น (Data Minimization)</td><td>เก็บเฉพาะข้อมูลการเรียนและข้อมูลบัญชีพื้นฐาน</td><td>ลดความเสี่ยงด้านข้อมูลส่วนบุคคลตามหลัก PDPA</td></tr>
+<tr><td>ไม่มีค่าใช้จ่าย (Zero Cost)</td><td>ใช้บริการระดับฟรี (Firebase Spark Plan)</td><td>สอดคล้องหลักความคุ้มค่าของโครงงานในหัวข้อ 1.1 นำไปใช้ในสถานศึกษาได้โดยไม่มีต้นทุน</td></tr>
+</table></div></body></html>

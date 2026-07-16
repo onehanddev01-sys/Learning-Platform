@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  #wrap { display: inline-block; padding: 22px; }
+  .mermaid { font-family: 'Leelawadee UI', 'Tahoma', sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap"><div class="mermaid"></div></div>
+<script type="text/plain" id="src">
+erDiagram
+    USER ||--|| PROGRESS : "มีความก้าวหน้า"
+    USER ||--o{ SAVED_CODE : "บันทึกโค้ดของแต่ละด่าน"
+    PROGRESS }o--o{ MISSION : "อ้างอิงด่านที่ผ่าน"
+    SAVED_CODE }o--|| MISSION : "ผูกกับด่าน"
+
+    USER {
+        string uid PK "รหัสประจำตัวจาก Auth"
+        string email
+        string displayName
+        string role "member หรือ admin"
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    PROGRESS {
+        array completed "รหัสด่านที่ผ่าน"
+        string currentMissionId
+        boolean capstoneDone
+        map hintState "ระดับคำใบ้แต่ละด่าน"
+    }
+    SAVED_CODE {
+        string missionId PK "รหัสด่าน"
+        string code "โค้ดล่าสุด"
+    }
+    MISSION {
+        string id PK "m0 m1 ... cap"
+        string title
+        string concept
+    }
+</script>
+<script>
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose',
+    themeVariables: { fontFamily: "'Leelawadee UI','Tahoma',sans-serif" } });
+  document.querySelector('.mermaid').textContent = document.getElementById('src').textContent.trim();
+  mermaid.run();
+</script>
+</body>
+</html>

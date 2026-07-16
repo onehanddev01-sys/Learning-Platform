@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  #wrap { display: inline-block; padding: 22px; }
+  .mermaid { font-family: 'Leelawadee UI', 'Tahoma', sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap"><div class="mermaid"></div></div>
+<script type="text/plain" id="src">
+flowchart TD
+    A([ผู้เรียนกดรันโค้ด]) --> B["runner.js: ทำความสะอาดโค้ด<br/>แล้วส่งให้ Skulpt รันในขอบเขตจำกัด"]
+    B --> C{เกิด Error หรือไม่}
+    C -- เกิด Error --> D["errors.js: แปลเป็นภาษาไทย<br/>+ ไฮไลต์บรรทัดที่ผิด"]
+    C -- รันสำเร็จ --> F["checker.js: ตรวจเกณฑ์ของด่าน<br/>ทุกข้อพร้อมกัน (AND)"]
+    F --> G{ผ่านทุกข้อหรือไม่}
+    G -- ผ่าน --> H["แสดงข้อความสำเร็จ<br/>progress.js บันทึกและปลดล็อกด่านถัดไป"]
+    G -- ไม่ผ่าน --> I["แสดงข้อความแนะนำโทนส้ม (failMessage)"]
+    D --> E["hints.js: นับความผิดซ้ำ<br/>เปิดคำใบ้อัตโนมัติเมื่อครบกำหนด"]
+    I --> E
+    E --> Z([แสดงผลใน Output Panel])
+    H --> Z
+</script>
+<script>
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose',
+    themeVariables: { fontFamily: "'Leelawadee UI','Tahoma',sans-serif" } });
+  document.querySelector('.mermaid').textContent = document.getElementById('src').textContent.trim();
+  mermaid.run();
+</script>
+</body>
+</html>

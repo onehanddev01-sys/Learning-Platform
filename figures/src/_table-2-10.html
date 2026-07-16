@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>บทบาท</th><th>ต้องเข้าสู่ระบบ</th><th>เข้าถึงเนื้อหาบทเรียน</th><th>ที่จัดเก็บความก้าวหน้า</th><th>ขอบเขตสิทธิ์ต่อฐานข้อมูล</th></tr>
+<tr><td>ผู้เยี่ยมชม (Guest)</td><td>ไม่</td><td>ครบทุกด่าน</td><td>localStorage เท่านั้น</td><td>ไม่มีข้อมูลบนฐานข้อมูล</td></tr>
+<tr><td>สมาชิก (Member)</td><td>ใช่</td><td>ครบทุกด่าน</td><td>localStorage + Firestore</td><td>อ่าน/เขียนเฉพาะเอกสารของตนเอง</td></tr>
+<tr><td>ผู้ดูแลระบบ (Administrator)</td><td>ใช่ (บัญชีเจ้าของ)</td><td>ครบทุกด่าน</td><td>—</td><td>จัดการทั้งระบบผ่าน Firebase Console</td></tr>
+</table></div></body></html>

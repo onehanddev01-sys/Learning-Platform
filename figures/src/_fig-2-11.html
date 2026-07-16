@@ -1,0 +1,51 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><style>
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;background:#fff;}
+  body{font-family:'Leelawadee UI','Tahoma',sans-serif;color:#1f2544;}
+  #wrap{display:inline-block;padding:20px;}
+
+  .screen{background:#fff;border:2px solid #8f97ab;border-radius:12px;overflow:hidden;position:relative;}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+       background:#4b5364;color:#fff;font-size:12.5px;font-weight:700;flex:none;}
+  .legend{margin-top:14px;font-size:13.5px;color:#4b5364;line-height:1.7;max-width:100%;}
+  .legend .num{width:18px;height:18px;font-size:11px;margin-right:6px;vertical-align:-3px;}
+  .topbar{background:#e8eaf0;border-bottom:1.5px solid #c9cede;display:flex;align-items:center;gap:12px;padding:10px 16px;font-size:13.5px;}
+  .tag{background:#fff;border:1.5px solid #b6bcc9;border-radius:7px;padding:4px 12px;color:#4b5364;}
+  .btn{border-radius:9px;padding:9px 22px;font-size:14.5px;display:inline-block;}
+  .btn-solid{background:#5b6372;color:#fff;}
+  .btn-line{background:#fff;border:1.5px solid #8f97ab;color:#4b5364;}
+  .ph{border:1.5px dashed #b6bcc9;background:#f7f8fa;border-radius:9px;}
+
+  .body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:14px;}
+  .card{border:1.5px solid #c9cede;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;font-size:13.5px;color:#4b5364;}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;border:1.5px solid #7d8598;margin-right:4px;}
+  .dot.on{background:#5b6372;border-color:#5b6372;}
+  .zone{font-size:13.5px;color:#2b3245;font-weight:700;margin-bottom:6px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .node{border:1.5px solid #b6bcc9;border-radius:9px;padding:7px 13px;font-size:12.5px;color:#4b5364;background:#f7f8fa;}
+  .node.done{background:#e8eaf0;border-style:solid;} .node.ready{border-color:#5b6372;border-width:2px;background:#fff;font-weight:700;}
+  .node.lock{border-style:dashed;color:#9aa1b0;}
+</style></head><body><div id="wrap">
+<div class="screen" style="width:820px">
+ <div class="topbar"><span class="tag">หน้าแรก</span><b style="margin:0 auto">แผนที่บทเรียน</b><span style="width:70px"></span> <span class="num">1</span></div>
+ <div class="body">
+  <div class="card">ความก้าวหน้าของคุณ&nbsp;
+    <span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span> …</span>
+    <span style="margin-left:auto" class="btn btn-line" >ลบความคืบหน้า</span> <span class="num">2</span></div>
+  <div>
+    <div class="zone">ปฐมนิเทศ — รู้จักสนามฝึก</div>
+    <div class="row"><span class="node done">m0 · ผ่านแล้ว — ทบทวนได้</span> <span class="num">3</span></div>
+  </div>
+  <div>
+    <div class="zone">Module 1: First Contact — พูดได้</div>
+    <div class="row"><span class="node done">m1 · ผ่านแล้ว</span><span class="node done">m2 · ผ่านแล้ว</span><span class="node ready">m3 · พร้อมเรียน</span><span class="node lock">mp1 · ยังล็อกอยู่</span></div>
+  </div>
+  <div>
+    <div class="zone">Module 2: ตัวเลขและการคำนวณ</div>
+    <div class="row"><span class="node lock">m4 · ยังล็อกอยู่</span><span class="node lock">m5 · ยังล็อกอยู่</span><span class="node lock">m6 · ยังล็อกอยู่</span><span class="node lock">mp2 · ยังล็อกอยู่</span></div>
+  </div>
+  <div style="font-size:13px;color:#9aa1b0">⋮ &nbsp;(เรียงต่อเนื่องจนถึง Capstone)</div>
+ </div>
+</div>
+<div class="legend" style="width:820px">
+<span class="num">1</span> แถบบน (ปุ่มกลับหน้าแรก + ชื่อหน้า) &nbsp; <span class="num">2</span> การ์ดความก้าวหน้า — แสดงเป็นจุด (จุดทึบ = ผ่านแล้ว ไม่แสดงตัวเลขคะแนน) พร้อมปุ่มลบความคืบหน้าแบบยืนยัน 2 ชั้น &nbsp; <span class="num">3</span> แผนที่ภารกิจเรียงเป็นโซนตามหน่วยการเรียน แต่ละด่านมี 3 สถานะ: ผ่านแล้ว / พร้อมเรียน / ยังล็อกอยู่ (ปลดล็อกเมื่อผ่านด่านก่อนหน้า)
+</div></div></body></html>

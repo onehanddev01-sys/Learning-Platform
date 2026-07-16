@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  #wrap { display: inline-block; padding: 22px; }
+  .mermaid { font-family: 'Leelawadee UI', 'Tahoma', sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap"><div class="mermaid"></div></div>
+<script type="text/plain" id="src">
+flowchart TB
+    subgraph browser["เว็บเบราว์เซอร์ของผู้เรียน (ประมวลผลทั้งหมดที่นี่)"]
+        subgraph pages["หน้าเว็บ HTML"]
+            P1["index.html<br/>หน้าต้อนรับ"]
+            P2["map.html<br/>แผนที่ภารกิจ"]
+            P3["mission.html<br/>หน้าบทเรียน"]
+        end
+        subgraph logic["โมดูลตรรกะ JavaScript"]
+            APP["app.js<br/>ตัวควบคุมหน้าบทเรียน"]
+            RUN["runner.js"]
+            CHK["checker.js"]
+            ERR["errors.js"]
+            HINT["hints.js"]
+            PROG["progress.js"]
+        end
+        DATA[("data/missions.js<br/>เนื้อหาบทเรียน 21 ด่าน")]
+        subgraph libs["ไลบรารีภายนอก"]
+            SK["Skulpt<br/>ตัวแปลภาษา Python"]
+            CM["CodeMirror<br/>ตัวแก้ไขโค้ด"]
+        end
+        LS[("localStorage")]
+    end
+    FS[("Cloud Firestore")]
+
+    P3 --> APP
+    APP --> RUN
+    APP --> CHK
+    APP --> HINT
+    APP --> DATA
+    APP --> PROG
+    P3 --> CM
+    RUN --> SK
+    RUN --> ERR
+    PROG --> LS
+    PROG -. "ซิงก์เมื่อเข้าสู่ระบบ" .-> FS
+</script>
+<script>
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose',
+    themeVariables: { fontFamily: "'Leelawadee UI','Tahoma',sans-serif" } });
+  document.querySelector('.mermaid').textContent = document.getElementById('src').textContent.trim();
+  mermaid.run();
+</script>
+</body>
+</html>

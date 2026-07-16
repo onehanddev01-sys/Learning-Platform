@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>ประเด็น</th><th>ฐานข้อมูลเชิงสัมพันธ์ (SQL)</th><th>Cloud Firestore (NoSQL เชิงเอกสาร)</th></tr>
+<tr><td>รูปแบบจัดเก็บ</td><td>ตาราง (แถว/คอลัมน์)</td><td>เอกสารคล้าย JSON ในคอลเลกชัน</td></tr>
+<tr><td>โครงสร้างข้อมูล (Schema)</td><td>กำหนดตายตัวล่วงหน้า</td><td>ยืดหยุ่น เพิ่มฟิลด์ได้ภายหลัง</td></tr>
+<tr><td>ความเข้ากับข้อมูลเดิม (JSON ใน localStorage)</td><td>ต้องแตกเป็นหลายตาราง</td><td>ตรงรูปแบบ แทบไม่ต้องแปลง</td></tr>
+<tr><td>การซิงก์เรียลไทม์</td><td>ต้องพัฒนาเพิ่ม</td><td>รองรับในตัว</td></tr>
+<tr><td>การทำงานออฟไลน์</td><td>ต้องพัฒนาเพิ่ม</td><td>มีแคชออฟไลน์ในตัว</td></tr>
+<tr><td>ความเหมาะสมกับโครงงาน</td><td>เกินความจำเป็น</td><td>เหมาะสมกับข้อมูลรายผู้ใช้ที่แยกกันชัดเจน</td></tr>
+</table></div></body></html>

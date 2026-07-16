@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>ด่าน</th><th>แนวคิด</th><th>เกณฑ์ผ่าน (ต้องเป็นจริงทุกข้อ)</th></tr>
+<tr><td>m0</td><td>ใช้งานหน้าจอ</td><td>แก้โค้ดแล้ว + ผลลัพธ์มีคำว่า "พร้อมแล้ว"</td></tr>
+<tr><td>m1</td><td>print()</td><td>แก้โค้ดแล้ว + มีคำว่า "ฉันเขียนโปรแกรมได้แล้ว" + ผลลัพธ์อย่างน้อย 2 บรรทัด</td></tr>
+<tr><td>m2</td><td>ตัวแปร</td><td>แก้โค้ดแล้ว + ตัวแปร food มีข้อความจริง + ผลลัพธ์อย่างน้อย 1 บรรทัด</td></tr>
+<tr><td>m3</td><td>input()</td><td>แก้โค้ดแล้ว + มีการถามด้วย input 2 ครั้ง + มี print + ผลลัพธ์อย่างน้อย 2 บรรทัด</td></tr>
+<tr><td>mp1</td><td>รวม Module 1</td><td>แก้โค้ดแล้ว + input 2 ครั้ง + มี print + ผลลัพธ์อย่างน้อย 2 บรรทัด</td></tr>
+<tr><td>m4</td><td>แปลงชนิดข้อมูล</td><td>แก้โค้ดแล้ว + มี int( + ผลลัพธ์มีคำว่า "ปีหน้าคุณจะอายุ"</td></tr>
+<tr><td>m5</td><td>ตัวดำเนินการ</td><td>แก้โค้ดแล้ว + ผลลัพธ์ครบทั้ง 4, 21, 2.33…, 1 (ผลของ - * / %)</td></tr>
+<tr><td>m6</td><td>f-string</td><td>แก้โค้ดแล้ว + มี print(f'…' + มีตัวแปรในปีกกา 2 คู่ในบรรทัดเดียว + ผลลัพธ์อย่างน้อย 1 บรรทัด</td></tr>
+<tr><td>mp2</td><td>รวม Module 2</td><td>แก้โค้ดแล้ว + มี float( + มี f-string + ผลลัพธ์มีคำว่า "BMI"</td></tr>
+<tr><td>m7</td><td>if</td><td>แก้โค้ดแล้ว + มี if + ผลลัพธ์มีคำว่า "ผ่าน"</td></tr>
+<tr><td>m8</td><td>else</td><td>แก้โค้ดแล้ว + มี else + มีคำว่า "รหัสไม่ถูกต้อง" + ผลลัพธ์อย่างน้อย 1 บรรทัด</td></tr>
+<tr><td>m9</td><td>elif</td><td>แก้โค้ดแล้ว + มี elif + มี else + ผลลัพธ์มีคำว่า "เกรด"</td></tr>
+<tr><td>mp3</td><td>รวม Module 3</td><td>แก้โค้ดแล้ว + มี input + elif + else + ผลลัพธ์อย่างน้อย 1 บรรทัด</td></tr>
+<tr><td>m10</td><td>for + range()</td><td>แก้โค้ดแล้ว + มี for…range + ผลลัพธ์อย่างน้อย 10 บรรทัด + มีเลข "10"</td></tr>
+<tr><td>m11</td><td>while</td><td>แก้โค้ดแล้ว + มี while + รันจบไม่ค้าง + ผลลัพธ์มี "ปล่อยจรวด" และ "1"</td></tr>
+<tr><td>m12</td><td>list</td><td>แก้โค้ดแล้ว + มีวงเล็บเหลี่ยม [ + มี for + ผลลัพธ์อย่างน้อย 3 บรรทัด</td></tr>
+<tr><td>mp4</td><td>รวม Module 4</td><td>แก้โค้ดแล้ว + มี for + ไม่พิมพ์ "40" ตรง ๆ + ผลลัพธ์มี "40" และ "8.0"</td></tr>
+<tr><td>m13</td><td>def</td><td>แก้โค้ดแล้ว + มี def + ผลลัพธ์อย่างน้อย 2 บรรทัด (พิสูจน์ว่าเรียกใช้ 2 ครั้ง)</td></tr>
+<tr><td>m14</td><td>parameter + return</td><td>แก้โค้ดแล้ว + มี return + ผลลัพธ์มี "10" + ไม่พิมพ์ print(10 ตรง ๆ</td></tr>
+<tr><td>m15</td><td>รวมร่างทุกแนวคิด</td><td>แก้โค้ดแล้ว + มี def + if/elif + for + วงเล็บเหลี่ยม [ + ผลลัพธ์อย่างน้อย 3 บรรทัด</td></tr>
+<tr><td>cap</td><td>โปรแกรมอิสระ</td><td>แก้โค้ดแล้ว + รันได้ไม่มี Error + ผลลัพธ์อย่างน้อย 1 บรรทัด (ไม่ตัดสินเนื้อหา)</td></tr>
+</table></div></body></html>

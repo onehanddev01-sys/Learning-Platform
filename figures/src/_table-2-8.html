@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#ffffff;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  code{font-family:Consolas,'Courier New',monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}
+</style></head><body><div id="wrap"><table>
+<tr><th>ประเด็น</th><th>localStorage (ชั้นเดิม)</th><th>Cloud Firestore (ชั้นที่เพิ่ม)</th></tr>
+<tr><td>ตำแหน่งจัดเก็บ</td><td>ในเบราว์เซอร์ของเครื่องผู้เรียน</td><td>เซิร์ฟเวอร์คลาวด์ของ Google</td></tr>
+<tr><td>ใช้ข้ามอุปกรณ์</td><td>ไม่ได้</td><td>ได้</td></tr>
+<tr><td>ต้องเข้าสู่ระบบ</td><td>ไม่ต้อง</td><td>ต้อง</td></tr>
+<tr><td>ทำงานขณะออฟไลน์</td><td>ได้เต็มที่</td><td>ได้ (มีแคชออฟไลน์ ซิงก์เมื่อกลับมาออนไลน์)</td></tr>
+<tr><td>ความเป็นส่วนตัว</td><td>สูงสุด (ไม่มีข้อมูลออกนอกเครื่อง)</td><td>มีข้อมูลบางส่วนอยู่บนคลาวด์ (เข้าถึงได้เฉพาะเจ้าของ)</td></tr>
+<tr><td>ค่าใช้จ่าย</td><td>ไม่มี</td><td>ไม่มี (ภายในโควตาแผนฟรี)</td></tr>
+<tr><td>บทบาทในระบบ</td><td>แหล่งข้อมูลหลัก</td><td>สำเนาสำรองที่ซิงก์ข้ามอุปกรณ์</td></tr>
+</table></div></body></html>
