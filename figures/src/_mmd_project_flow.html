@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  #wrap { display: inline-block; padding: 22px; }
+  .mermaid { font-family: 'Leelawadee UI', 'Tahoma', sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap"><div class="mermaid"></div></div>
+<script type="text/plain" id="src">
+flowchart TD
+    S([เริ่มต้น]) --> A[ค้นหาปัญหาและหัวข้อที่สนใจ]
+    A --> B[จัดทำแบบเสนอโครงงาน<br/>นำเสนออาจารย์ที่ปรึกษา]
+    B --> C{ได้รับอนุมัติหรือไม่}
+    C -- ไม่ผ่าน --> A2[ค้นหาข้อมูลเพิ่มเติม<br/>และปรับปรุงเอกสาร]
+    A2 --> B
+    C -- ผ่าน --> D[ทบทวนวรรณกรรมและศึกษา<br/>ทฤษฎี งานวิจัย และเทคโนโลยีที่เกี่ยวข้อง]
+    D --> E[วิเคราะห์และออกแบบระบบ<br/>หลักสูตร 21 ด่าน / สถาปัตยกรรม / ฐานข้อมูล]
+    E --> F[พัฒนาระบบด้วย HTML CSS JavaScript<br/>ร่วมกับ Skulpt และ Firebase]
+    F --> G[นำเสนอต้นแบบต่ออาจารย์ที่ปรึกษา]
+    G --> H{ผ่านการพิจารณาหรือไม่}
+    H -- ไม่ผ่าน --> F2[ปรับปรุงระบบ<br/>ตามข้อเสนอแนะ]
+    F2 --> G
+    H -- ผ่าน --> I[ทดสอบสื่อการเรียนรู้กับ<br/>กลุ่มตัวอย่างประมาณ 50 คน]
+    I --> J[รวบรวมข้อมูลและ<br/>วิเคราะห์อภิปรายผล]
+    J --> K[สรุปผลโครงงาน จัดทำรูปเล่ม<br/>และส่งมอบผลงาน]
+    K --> Z([จบ])
+</script>
+<script>
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose',
+    themeVariables: { fontFamily: "'Leelawadee UI','Tahoma',sans-serif" } });
+  document.querySelector('.mermaid').textContent = document.getElementById('src').textContent.trim();
+  mermaid.run();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><style>
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;background:#fff;}
+  body{font-family:'Leelawadee UI','Tahoma',sans-serif;color:#1f2544;}
+  #wrap{display:inline-block;padding:20px;}
+  table{border-collapse:collapse;font-size:14.5px;max-width:1280px;}
+  th,td{border:1px solid #cfd6ea;padding:9px 12px;text-align:left;vertical-align:top;line-height:1.55;}
+  th{background:#e9edf7;font-weight:700;color:#20264a;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  td.c{text-align:center;} .pass{color:#1e8e3e;font-weight:700;}
+</style></head><body><div id="wrap"><table>
+<tr><th>ลำดับ</th><th>รายการทดสอบ</th><th>ค่าเป้าหมาย/มาตรฐาน</th><th>ผลการทดสอบจริง</th><th>สรุป</th><th>หมายเหตุ</th></tr>
+<tr><td class="c">1</td><td>โค้ดเฉลยของทุกด่านต้องผ่านเกณฑ์การตรวจของระบบ</td><td>ผ่านครบ 21 ด่าน</td><td>ผ่าน 21/21 ด่าน</td><td class="c pass">ผ่าน</td><td>ทดสอบด้วยชุดทดสอบอัตโนมัติ ต้องรันทีละด่านตามลำดับเพราะ Skulpt ใช้ค่าตั้งกลางร่วมกัน</td></tr>
+<tr><td class="c">2</td><td>โค้ดตั้งต้นของทุกด่านต้องไม่ผ่านเกณฑ์ (กันกดรันเฉย ๆ แล้วผ่าน)</td><td>ไม่ผ่านครบ 21 ด่าน</td><td>ไม่ผ่าน 21/21 ด่าน</td><td class="c pass">ผ่าน</td><td>ยืนยันกติกา codeChanged ทำงานทุกด่าน</td></tr>
+<tr><td class="c">3</td><td>ข้อความแสดงข้อผิดพลาดภาษาไทยชี้ตรงสาเหตุของความผิดพลาดจำลอง</td><td>ตรงสาเหตุครบ 44 สถานการณ์</td><td>ตรงสาเหตุ 44/44 สถานการณ์</td><td class="c pass">ผ่าน</td><td>การทดสอบเชิงปรปักษ์จำลองความผิดพลาดจริงของผู้เริ่มต้น 2 ระลอก (27 + 17 กรณี)</td></tr>
+<tr><td class="c">4</td><td>กรณีขอบเขตของระบบ เช่น ลูปไม่รู้จบ, localStorage ถูกปิด, เข้าด่านที่ล็อกผ่าน URL</td><td>ระบบไม่ค้างและแจ้งผู้ใช้อย่างเหมาะสมครบ 14 กรณี</td><td>ผ่าน 14/14 กรณี</td><td class="c pass">ผ่าน</td><td>รวมกรณีรันโค้ด 10,000 บรรทัด ระบบตัดที่ 2,000 บรรทัดโดยไม่ค้าง</td></tr>
+<tr><td class="c">5</td><td>การเข้าสู่ระบบด้วยบัญชี Google และการซิงก์ความก้าวหน้าขึ้น Cloud Firestore</td><td>เอกสารผู้ใช้ถูกสร้างบนฐานข้อมูลพร้อมข้อมูลความก้าวหน้าครบถ้วน</td><td>เอกสาร users/{uid} ถูกสร้างจริง ฟิลด์ครบ และผู้เยี่ยมชมที่ไม่เข้าสู่ระบบใช้งานได้ปกติ</td><td class="c pass">ผ่าน</td><td>ทดสอบบนเว็บจริงที่เผยแพร่ผ่าน Vercel พบและแก้ไขปัญหาการรีโหลดวนจากการเทียบข้อมูลระหว่างซิงก์แล้ว</td></tr>
+</table></div></body></html>
