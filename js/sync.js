@@ -54,7 +54,7 @@
   }
 
   /*
-   * ผสานข้อมูล local กับ cloud ตามกติกาในบทที่ 2 (ตารางที่ 2-11)
+   * ผสานข้อมูล local กับ cloud ตามกติกาในบทที่ 2 (ตารางที่ 2-13)
    * คืน object รูป local สำหรับส่งเข้า Progress.importState
    */
   function merge(local, cloud) {
