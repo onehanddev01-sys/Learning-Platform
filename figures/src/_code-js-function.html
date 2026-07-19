@@ -1,0 +1,13 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script><style>*{box-sizing:border-box;}html,body{margin:0;background:#fff;}body{font-family:'Leelawadee UI','Tahoma',sans-serif;color:#1f2544;}#wrap{display:inline-block;padding:20px;}pre{margin:0;background:#f8f9fc;border:1.5px solid #d7dcec;border-radius:12px;padding:20px 26px;}code.hljs{background:transparent;padding:0;font-family:Consolas,'Courier New','Leelawadee UI',monospace;font-size:16px;line-height:1.7;}</style></head><body><div id="wrap"><pre><code class="language-javascript">// ฟังก์ชันและ callback ใน progress.js — แก้สถานะผ่านฟังก์ชันแล้วบันทึกอัตโนมัติ
+function update(fn) {
+  var state = load();
+  fn(state);        // เรียก callback ที่ผู้ใช้ส่งเข้ามาแก้ไขสถานะ
+  save(state);
+  return state;
+}
+
+// การใช้งาน: ส่งฟังก์ชันเข้าไปเป็นพารามิเตอร์
+Progress.update(function (s) {
+  if (s.completed.indexOf(id) === -1) s.completed.push(id);
+});</code></pre></div><script>hljs.highlightAll();</script></body></html>

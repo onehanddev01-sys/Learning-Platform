@@ -1,0 +1,37 @@
+<mxfile host="Electron">
+  <diagram id="syscomp" name="องค์ประกอบของระบบ">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1150" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontSize=15;fontStyle=1;spacingTop=6;" value="เว็บเบราว์เซอร์ของผู้เรียน (การประมวลผลทั้งหมดเกิดที่นี่)" vertex="1"><mxGeometry height="620" width="820" x="40" y="40" as="geometry" /></mxCell>
+        <mxCell id="pages" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" value="หน้าเว็บ HTML" vertex="1"><mxGeometry height="150" width="250" x="70" y="90" as="geometry" /></mxCell>
+        <mxCell id="p1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" value="index.html (หน้าต้อนรับ)" vertex="1"><mxGeometry height="30" width="220" x="85" y="120" as="geometry" /></mxCell>
+        <mxCell id="p2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" value="map.html (แผนที่ภารกิจ)" vertex="1"><mxGeometry height="30" width="220" x="85" y="160" as="geometry" /></mxCell>
+        <mxCell id="p3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;" value="mission.html (หน้าบทเรียน)" vertex="1"><mxGeometry height="30" width="220" x="85" y="200" as="geometry" /></mxCell>
+        <mxCell id="logic" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" value="โมดูลตรรกะ JavaScript" vertex="1"><mxGeometry height="280" width="250" x="70" y="280" as="geometry" /></mxCell>
+        <mxCell id="j1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="app.js (ตัวควบคุมหน้าบทเรียน)" vertex="1"><mxGeometry height="26" width="220" x="85" y="310" as="geometry" /></mxCell>
+        <mxCell id="j2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="runner.js (รันโค้ดผ่าน Skulpt)" vertex="1"><mxGeometry height="26" width="220" x="85" y="342" as="geometry" /></mxCell>
+        <mxCell id="j3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="checker.js (ตรวจผ่าน/ไม่ผ่าน)" vertex="1"><mxGeometry height="26" width="220" x="85" y="374" as="geometry" /></mxCell>
+        <mxCell id="j4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="errors.js (แปล Error เป็นไทย)" vertex="1"><mxGeometry height="26" width="220" x="85" y="406" as="geometry" /></mxCell>
+        <mxCell id="j5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="hints.js (คำใบ้ 3 ระดับ)" vertex="1"><mxGeometry height="26" width="220" x="85" y="438" as="geometry" /></mxCell>
+        <mxCell id="j6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="progress.js (ความก้าวหน้า)" vertex="1"><mxGeometry height="26" width="220" x="85" y="470" as="geometry" /></mxCell>
+        <mxCell id="j7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;" value="auth.js + sync.js (บัญชี/ซิงก์)" vertex="1"><mxGeometry height="26" width="220" x="85" y="502" as="geometry" /></mxCell>
+        <mxCell id="data" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="data/missions.js&#xa;เนื้อหาบทเรียน 21 ด่าน" vertex="1"><mxGeometry height="90" width="180" x="380" y="110" as="geometry" /></mxCell>
+        <mxCell id="libs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" value="ไลบรารีภายนอก" vertex="1"><mxGeometry height="160" width="250" x="560" y="280" as="geometry" /></mxCell>
+        <mxCell id="l1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" value="Skulpt (ตัวแปลภาษา Python)" vertex="1"><mxGeometry height="30" width="220" x="575" y="310" as="geometry" /></mxCell>
+        <mxCell id="l2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" value="CodeMirror (ตัวแก้ไขโค้ด)" vertex="1"><mxGeometry height="30" width="220" x="575" y="350" as="geometry" /></mxCell>
+        <mxCell id="l3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" value="Firebase SDK (Auth + Firestore)" vertex="1"><mxGeometry height="30" width="220" x="575" y="390" as="geometry" /></mxCell>
+        <mxCell id="ls" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="localStorage&#xa;(ที่เก็บหลักในเครื่อง)" vertex="1"><mxGeometry height="90" width="180" x="380" y="500" as="geometry" /></mxCell>
+        <mxCell id="fb" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Firebase&#xa;(Authentication +&#xa;Cloud Firestore)" vertex="1"><mxGeometry height="110" width="190" x="920" y="380" as="geometry" /></mxCell>
+        <mxCell id="a1" edge="1" parent="1" source="p3" target="j1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a2" edge="1" parent="1" source="j1" target="data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a3" edge="1" parent="1" source="j2" target="l1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a4" edge="1" parent="1" source="j1" target="l2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a5" edge="1" parent="1" source="j6" target="ls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a6" edge="1" parent="1" source="j7" target="l3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="540" y="515" /><mxPoint x="540" y="405" /></Array></mxGeometry></mxCell>
+        <mxCell id="a7" edge="1" parent="1" source="l3" target="fb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="albl" parent="1" style="text;html=1;fontSize=13;" value="ซิงก์เมื่อเข้าสู่ระบบ (ไม่บังคับ)" vertex="1"><mxGeometry height="30" width="180" x="870" y="330" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

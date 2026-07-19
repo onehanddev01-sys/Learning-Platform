@@ -1,0 +1,11 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><style>*{box-sizing:border-box;}html,body{margin:0;background:#fff;}body{font-family:'Leelawadee UI','Tahoma',sans-serif;color:#1f2544;}#wrap{display:inline-block;padding:20px;}table{border-collapse:collapse;font-family:'Leelawadee UI','Tahoma',sans-serif;font-size:15px;color:#1f2544;max-width:1220px;}th,td{border:1px solid #cfd6ea;padding:9px 13px;text-align:left;vertical-align:top;line-height:1.55;}th{background:#e9edf7;font-weight:700;color:#20264a;}tr:nth-child(even) td{background:#fafbfe;}code{font-family:Consolas,monospace;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:13px;}</style></head><body><div id="wrap"><table><tr><th>หมวดไวยากรณ์</th><th>รูปแบบที่ใช้</th><th>ตัวอย่างจริงจากโครงงาน</th></tr>
+<tr><td>การประกาศตัวแปร</td><td><code>var</code> (รองรับเบราว์เซอร์กว้าง)</td><td><code>var KEY = 'pylearn_progress_v1';</code></td></tr>
+<tr><td>ชนิดข้อมูล</td><td>string, number, boolean, array, object</td><td><code>completed: []</code>, <code>capstoneDone: false</code></td></tr>
+<tr><td>ตัวดำเนินการเปรียบเทียบ</td><td><code>===</code>, <code>!==</code>, <code>&gt;=</code></td><td><code>if (s.completed.indexOf(id) === -1)</code></td></tr>
+<tr><td>ตัวดำเนินการตรรกะ</td><td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td><td><code>if (!storageOk) { ... }</code></td></tr>
+<tr><td>เงื่อนไข</td><td><code>if / else if / else</code></td><td>การเลือกสถานะด่าน: ผ่านแล้ว / พร้อมเรียน / ล็อก</td></tr>
+<tr><td>การวนซ้ำ</td><td><code>for</code> และ <code>forEach</code></td><td>วนสร้างจุดความก้าวหน้าครบทุกด่านบนแผนที่</td></tr>
+<tr><td>ฟังก์ชัน</td><td>ประกาศด้วย <code>function</code> และส่งเป็น callback</td><td><code>Progress.update(function (s) { ... })</code></td></tr>
+<tr><td>เหตุการณ์ (Event)</td><td><code>addEventListener</code></td><td>ปุ่มรันโค้ด คีย์ลัด Ctrl+Enter การสลับแท็บ</td></tr>
+<tr><td>การหน่วงเวลา / ไม่ประสานเวลา</td><td><code>setTimeout</code>, Promise (<code>.then/.catch</code>)</td><td>หน่วงการส่งข้อมูลขึ้น Firestore (debounce)</td></tr>
+</table></div></body></html>

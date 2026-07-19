@@ -1,0 +1,34 @@
+<mxfile host="Electron">
+  <diagram id="run_flow" name="การทำงานเมื่อกดรันโค้ด">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="950" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="s" parent="1" style="strokeWidth=1;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;strokeColor=#82B366;fillColor=#D5E8D4;" value="ผู้เรียนกดรันโค้ด" vertex="1"><mxGeometry height="60" width="170" x="215" y="30" as="geometry" /></mxCell>
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="runner.js: ทำความสะอาดโค้ด (sanitize)&#xa;แล้วส่งให้ Skulpt รันในขอบเขตจำกัด" vertex="1"><mxGeometry height="60" width="290" x="155" y="130" as="geometry" /></mxCell>
+        <mxCell id="d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="เกิด Error ไหม" vertex="1"><mxGeometry height="100" width="220" x="190" y="230" as="geometry" /></mxCell>
+        <mxCell id="bE" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="errors.js: แปล Error เป็นภาษาไทย&#xa;และไฮไลต์บรรทัดที่ผิด" vertex="1"><mxGeometry height="60" width="280" x="560" y="250" as="geometry" /></mxCell>
+        <mxCell id="b2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="checker.js: ตรวจเกณฑ์ของด่าน&#xa;ทุกข้อพร้อมกัน (AND)" vertex="1"><mxGeometry height="60" width="280" x="160" y="380" as="geometry" /></mxCell>
+        <mxCell id="d2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="ผ่านทุกข้อไหม" vertex="1"><mxGeometry height="100" width="220" x="190" y="480" as="geometry" /></mxCell>
+        <mxCell id="bW" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="แสดงข้อความสำเร็จ&#xa;progress.js บันทึกและปลดล็อกด่านถัดไป" vertex="1"><mxGeometry height="60" width="290" x="155" y="630" as="geometry" /></mxCell>
+        <mxCell id="bF" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="แสดงข้อความแนะนำโทนส้ม&#xa;(failMessage)" vertex="1"><mxGeometry height="60" width="280" x="560" y="500" as="geometry" /></mxCell>
+        <mxCell id="bH" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="hints.js: นับความไม่ผ่านซ้ำ&#xa;เปิดคำใบ้อัตโนมัติเมื่อครบกำหนด" vertex="1"><mxGeometry height="60" width="280" x="560" y="630" as="geometry" /></mxCell>
+        <mxCell id="e" parent="1" style="strokeWidth=1;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;strokeColor=#82B366;fillColor=#D5E8D4;" value="แสดงผลใน Output Panel" vertex="1"><mxGeometry height="60" width="220" x="190" y="760" as="geometry" /></mxCell>
+        <mxCell id="q1" edge="1" parent="1" source="s" target="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q2" edge="1" parent="1" source="b1" target="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q3" edge="1" parent="1" source="d1" target="bE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q4" edge="1" parent="1" source="d1" target="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q5" edge="1" parent="1" source="b2" target="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q6" edge="1" parent="1" source="d2" target="bW" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q7" edge="1" parent="1" source="d2" target="bF" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q8" edge="1" parent="1" source="bE" target="bH" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="890" y="280" /><mxPoint x="890" y="660" /></Array></mxGeometry></mxCell>
+        <mxCell id="q9" edge="1" parent="1" source="bF" target="bH" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q10" edge="1" parent="1" source="bH" target="e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="q11" edge="1" parent="1" source="bW" target="e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="z1" parent="1" style="text;html=1;fontSize=16;fontColor=#FF0000;" value="เกิด Error" vertex="1"><mxGeometry height="30" width="80" x="440" y="250" as="geometry" /></mxCell>
+        <mxCell id="z2" parent="1" style="text;html=1;fontSize=16;fontColor=#009900;" value="รันสำเร็จ" vertex="1"><mxGeometry height="30" width="80" x="310" y="340" as="geometry" /></mxCell>
+        <mxCell id="z3" parent="1" style="text;html=1;fontSize=16;fontColor=#009900;" value="ผ่าน" vertex="1"><mxGeometry height="30" width="50" x="310" y="590" as="geometry" /></mxCell>
+        <mxCell id="z4" parent="1" style="text;html=1;fontSize=16;fontColor=#FF0000;" value="ไม่ผ่าน" vertex="1"><mxGeometry height="30" width="60" x="440" y="500" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

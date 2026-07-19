@@ -1,0 +1,13 @@
+<mxfile host="Electron">
+  <diagram id="framework" name="กรอบแนวคิด">
+    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="520" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="iv" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;spacing=12;fontSize=14;" value="&lt;b&gt;ตัวแปรอิสระ&lt;/b&gt;&lt;br&gt;เว็บแอปพลิเคชันสื่อการเรียนรู้การเขียนโปรแกรม Python&lt;br&gt;สำหรับผู้เริ่มต้น ประกอบด้วยฟังก์ชันหลัก&lt;br&gt;&lt;br&gt;1) ระบบบทเรียนแบบภารกิจ (Mission System)&lt;br&gt;2) ระบบเขียนและรันโค้ด Python บนเบราว์เซอร์&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;(Online Code Editor ด้วย Skulpt)&lt;br&gt;3) ระบบแจ้งข้อผิดพลาดและคำแนะนำอัตโนมัติ&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;(Error Message และ Hint)&lt;br&gt;4) ระบบบัญชีผู้ใช้และการซิงก์ข้อมูลข้ามอุปกรณ์&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;แบบไม่บังคับ (Optional Account and Cloud Sync)" vertex="1"><mxGeometry height="300" width="430" x="60" y="110" as="geometry" /></mxCell>
+        <mxCell id="dv" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;spacing=12;fontSize=14;" value="&lt;b&gt;ตัวแปรตาม&lt;/b&gt;&lt;br&gt;&lt;br&gt;1) ผลลัพธ์ของระบบ — ทำงานได้ครบถ้วน&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ตามฟังก์ชันที่ออกแบบไว้&lt;br&gt;&lt;br&gt;2) ประสิทธิภาพของระบบ — ผลการทดสอบ&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;แบบ Black-box Testing&lt;br&gt;&lt;br&gt;3) ระดับความพึงพอใจของผู้ใช้ —&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;แบบสอบถามมาตราส่วนประมาณค่า 5 ระดับ&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;(Likert Scale)" vertex="1"><mxGeometry height="300" width="400" x="640" y="110" as="geometry" /></mxCell>
+        <mxCell id="ar" edge="1" parent="1" source="iv" target="dv" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeWidth=2;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ti" parent="1" style="text;html=1;fontSize=16;fontStyle=1;align=center;" value="กรอบแนวคิดในการจัดทำโครงงาน" vertex="1"><mxGeometry height="30" width="400" x="350" y="40" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,13 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script><style>*{box-sizing:border-box;}html,body{margin:0;background:#fff;}body{font-family:'Leelawadee UI','Tahoma',sans-serif;color:#1f2544;}#wrap{display:inline-block;padding:20px;}pre{margin:0;background:#f8f9fc;border:1.5px solid #d7dcec;border-radius:12px;padding:20px 26px;}code.hljs{background:transparent;padding:0;font-family:Consolas,'Courier New','Leelawadee UI',monospace;font-size:16px;line-height:1.7;}</style></head><body><div id="wrap"><pre><code class="language-javascript">// ตัวแปรและชนิดข้อมูลใน progress.js — สถานะเริ่มต้นของผู้เรียน
+var KEY = 'pylearn_progress_v1';          // string
+
+function defaultState() {
+  return {
+    version: 1,                // number
+    completed: [],             // array — รายการด่านที่ผ่านแล้ว
+    currentMissionId: 'm0',    // string
+    capstoneDone: false,       // boolean
+    savedCode: {},             // object — โค้ดค้างของแต่ละด่าน
+  };
+}</code></pre></div><script>hljs.highlightAll();</script></body></html>

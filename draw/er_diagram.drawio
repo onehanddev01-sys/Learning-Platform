@@ -1,0 +1,21 @@
+<mxfile host="Electron">
+  <diagram id="er" name="ER Diagram">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;spacing=8;" value="&lt;b&gt;&lt;u&gt;USER (ผู้ใช้)&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;uid (PK)&lt;/b&gt; — รหัสประจำตัวจาก Auth&lt;br&gt;email — อีเมล&lt;br&gt;displayName — ชื่อที่แสดง&lt;br&gt;role — บทบาท (member/admin)&lt;br&gt;createdAt — เวลาสร้างบัญชี&lt;br&gt;updatedAt — เวลาปรับปรุงล่าสุด" vertex="1"><mxGeometry height="150" width="280" x="360" y="40" as="geometry" /></mxCell>
+        <mxCell id="prog" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;spacing=8;" value="&lt;b&gt;&lt;u&gt;PROGRESS (ความก้าวหน้า)&lt;/u&gt;&lt;/b&gt;&lt;br&gt;completed — รายการด่านที่ผ่าน&lt;br&gt;currentMissionId — ด่านล่าสุด&lt;br&gt;capstoneDone — ผ่าน Capstone ไหม&lt;br&gt;hintState — ระดับคำใบ้แต่ละด่าน" vertex="1"><mxGeometry height="130" width="280" x="80" y="330" as="geometry" /></mxCell>
+        <mxCell id="code" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#ffe6cc;strokeColor=#d79b00;spacing=8;" value="&lt;b&gt;&lt;u&gt;SAVED_CODE (โค้ดที่บันทึก)&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;missionId (PK)&lt;/b&gt; — รหัสด่าน&lt;br&gt;code — โค้ดล่าสุดของด่านนั้น" vertex="1"><mxGeometry height="100" width="280" x="640" y="330" as="geometry" /></mxCell>
+        <mxCell id="mission" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;spacing=8;" value="&lt;b&gt;&lt;u&gt;MISSION (ด่านบทเรียน)&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;id (PK)&lt;/b&gt; — m0, m1 ... cap&lt;br&gt;title — ชื่อด่าน&lt;br&gt;concept — แนวคิดที่สอน&lt;br&gt;&lt;i&gt;(ข้อมูลเนื้อหาในไฟล์ missions.js&lt;br&gt;ไม่ได้อยู่ในฐานข้อมูล)&lt;/i&gt;" vertex="1"><mxGeometry height="140" width="280" x="360" y="600" as="geometry" /></mxCell>
+        <mxCell id="r1" edge="1" parent="1" source="user" target="prog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERone;endFill=0;exitX=0;exitY=0.5;entryX=0.5;entryY=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2" edge="1" parent="1" source="user" target="code" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;exitX=1;exitY=0.5;entryX=0.5;entryY=0;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3" edge="1" parent="1" source="prog" target="mission" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERmany;endFill=0;exitX=0.5;exitY=1;entryX=0;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4" edge="1" parent="1" source="code" target="mission" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;exitX=0.5;exitY=1;entryX=1;entryY=0.5;"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="lb1" parent="1" style="text;html=1;fontSize=14;" value="มีความก้าวหน้า (1 : 1)" vertex="1"><mxGeometry height="30" width="160" x="130" y="230" as="geometry" /></mxCell>
+        <mxCell id="lb2" parent="1" style="text;html=1;fontSize=14;" value="บันทึกโค้ดหลายด่าน (1 : N)" vertex="1"><mxGeometry height="30" width="190" x="710" y="230" as="geometry" /></mxCell>
+        <mxCell id="lb3" parent="1" style="text;html=1;fontSize=14;" value="อ้างอิงด่านที่ผ่าน (M : N)" vertex="1"><mxGeometry height="30" width="180" x="130" y="540" as="geometry" /></mxCell>
+        <mxCell id="lb4" parent="1" style="text;html=1;fontSize=14;" value="ผูกกับด่าน (N : 1)" vertex="1"><mxGeometry height="30" width="140" x="720" y="540" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
