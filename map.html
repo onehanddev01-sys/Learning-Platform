@@ -23,20 +23,10 @@
     <div class="map-progress">
       <span class="map-progress-label">ความก้าวหน้าของคุณ</span>
       <div id="progress-dots" class="progress-dots"></div>
-      <button id="reset-btn" class="reset-btn" type="button">ลบความคืบหน้า</button>
     </div>
 
     <div id="map-root"></div>
   </main>
-
-  <!-- หน้าต่างยืนยันการลบความคืบหน้า (2 ชั้น) -->
-  <div id="confirm-overlay" class="win-overlay hidden">
-    <div class="confirm-card">
-      <h2 id="confirm-title"></h2>
-      <p id="confirm-text"></p>
-      <div id="confirm-actions" class="confirm-actions"></div>
-    </div>
-  </div>
 
   <!-- Firebase (compat) — ระบบบัญชีและการซิงก์ข้ามอุปกรณ์ (ไม่บังคับ; ออฟไลน์ก็ใช้เว็บได้) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>

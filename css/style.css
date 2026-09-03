@@ -392,44 +392,6 @@ a.map-node:hover { background: #f4f6fd; }
 .node-capstone .node-icon { width: 54px; height: 54px; }
 .node-capstone .node-title { font-size: 17px; }
 
-/* ปุ่มลบความคืบหน้า บนการ์ดความก้าวหน้า */
-.reset-btn {
-  margin-left: auto;
-  background: transparent;
-  border: 1px solid var(--orange-border);
-  color: var(--orange);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 6px 14px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.reset-btn:hover { background: var(--orange-bg); }
-
-/* ปุ่มยืนยันการลบ (โทนส้มตามภาษาสีของระบบ) */
-.btn-danger {
-  background: var(--orange-strong);
-  color: #fff;
-}
-.btn-danger:hover { background: #c85f06; }
-
-/* การ์ดยืนยันการลบความคืบหน้า */
-.confirm-card {
-  background: var(--card);
-  border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-  max-width: 460px;
-  width: 100%;
-  text-align: center;
-  padding: 30px 28px 26px;
-  animation: win-pop 0.25s ease-out;
-}
-.confirm-card h2 { margin: 0 0 10px; font-size: 21px; color: var(--orange-strong); }
-.confirm-card p { margin: 0 0 22px; font-size: 15.5px; }
-.confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-
 /* ---------- หน้า Mission ---------- */
 
 .mission-page { background: var(--bg); }
